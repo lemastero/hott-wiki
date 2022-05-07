@@ -16,10 +16,12 @@ and only finetly many people who can do proofs.
 
 * Negative fragment of IPL
 - [[https://www.youtube.com/watch?v=u92V0OMgvhM&t=3961s][1:06:04 HoTT lecture 1]]
-- In *classical logic* we assume there is only two propositons *T true* and *F false* and write proof tables to define logical connectives.
-In constructive logic propositions have information (computational) content and we do not identify them as just being true or false.
+- In *classical logic* we assume there is only two propositons *T true* and *F false* and write proof tables to define logical connectives. See [[https://en.wikipedia.org/wiki/Hilbert_system][Hilbert system]]
+In constructive logic, propositions have information (computational) content and we do not identify them as just being true or false. See [[https://ncatlab.org/nlab/show/natural+deduction][natural deduction]].
 
 ** truth
+
+truth formation rule
 
 #+BEGIN_SRC
 ------- (TF)
@@ -33,16 +35,20 @@ truth introduction rule
 T true
 #+END_SRC
 
-no T-elimin rules
+no truth elimination rules
 
 ** conjunction (and) \wedge
 [[https://www.youtube.com/watch?v=u92V0OMgvhM&t=4167s][1:09:27 HoTT lecture 1]]
 
+conjunction formation rule
+
 #+BEGIN_SRC
 A prop  A prop
---------------- (^F)
+-------------- (^F)
 A ^ B prop
 #+END_SRC
+
+conjunction introduction rule
 
 #+BEGIN_SRC
 A true  B true
@@ -50,19 +56,21 @@ A true  B true
 A ^ B true
 #+END_SRC
 
+conjunction elimination rules
+
 #+BEGIN_SRC
 A ^ B true
---------------- (^E1)
+----------- (^E1)
 A true
 #+END_SRC
 
 #+BEGIN_SRC
 A ^ B true
---------------- (^E2)
+----------- (^E2)
 B true
 #+END_SRC
 
-* entailment (logical consequence) \sup
+* implication \sup
 
 [[https://www.youtube.com/watch?v=u92V0OMgvhM&t=4281s][1:11:22 HoTT lecture 1]]
 
@@ -74,25 +82,95 @@ A ⊃ B prop
 
 #+BEGIN_SRC
 A true ⊢  B true
---------------- (⊃I)
+----------------- (⊃I)
 A ⊃ B true
 #+END_SRC
 
-we could say:
+We could say:
 
 #+BEGIN_SRC
 A ⊃ B true 
---------------- 
+---------------- 
 A true ⊢  B true
 #+END_SRC
 
-but usually we use curried verion ([[https://ncatlab.org/nlab/show/modus+ponens][modus ponens]])
+but usually we use curried verion ([[https://ncatlab.org/nlab/show/modus+ponens][modus ponens]]):
 
 #+BEGIN_SRC
 A ⊃ B true  A true
------------------- (⊃E)
+------------------- (⊃E)
 B true
 #+END_SRC
 
+What makes the rules good ([[https://www.youtube.com/watch?v=L37jQy7gxH4&t=633s][10:37 HoTT lecture 2]])?
+
+- judgements ([[https://www.youtube.com/watch?v=L37jQy7gxH4&t=1050s][17:31 HoTT lecture 2]])
+  - basic (atomic) judgements
+    #+BEGIN_SRC  
+    A prop
+    A true
+    #+END_SRC
+
+  - compund judgements
+    #+BEGIN_SRC  
+    A true, A2 true, ..., An true ⊢ B
+    #+END_SRC
+
+A true ⊢ B true is entailment (logical consequence, hypothetical judgement).
 Logical entailment is prior to implication. In Hilbert formulation of logic this distinction is not done.
 
+Entailment is like mapping. Mapping can be internalized in category by exponential object.
+
+** structural propertis of entailment
+1. *reflexivity*
+  #+BEGIN_SRC 
+  A true ⊢ A true (R)
+  #+END_SRC
+  
+  Whatever I assume it follows from this assumption.
+
+2. *transitivity* (composition)
+  #+BEGIN_SRC 
+  Γ1 ⊢ A true   Γ2, A true ⊢ B true
+  ----------------------------------- (T)
+  Γ1 Γ2 ⊢ B true
+  #+END_SRC
+  
+  If I know A is true and I assume A is true to show that B is true,
+  then I can simpliy and say B is true.
+  If I use lemma A and prove theorem B using this lemma, I can inline lemma in proove of B.
+  
+3. *weakening*
+  #+BEGIN_SRC
+  Γ ⊢ A true
+  ------------------- (W)
+  Γ, B true ⊢ A true
+  #+END_SRC
+  
+  If I proove someting (A) then I could proove it using extra assumption B.
+  In [[https://ncatlab.org/nlab/show/relevance+logic][relevance logic]] ([[https://plato.stanford.edu/entries/logic-relevance/][SEoP]]) we omit this property.
+  We would have relative entailment where we say that sth relies on all assumption.
+  
+4. *contraction*
+  #+BEGIN_SRC
+  Γ, A true, A true ⊢ B true 
+  ----------------------- (C)
+  Γ, A true ⊢ B true
+  #+END_SRC
+  
+  If I state lemma twice I could just state it once.
+  In relevance (linear) logic we could deny this principle - we care how many times given assumption is used.
+
+5. *exchange* (permutation)
+  #+BEGIN_SRC
+  Γ ⊢ A true 
+  ----------------------- (X)
+  perm(Γ) ⊢ A true
+  #+END_SRC
+  If I have proof of theorem from some assumptions, then I can use any permutation of those assumptions.
+
+If we omit any of the assumptions 3-5 we have [[https://ncatlab.org/nlab/show/substructural+logic][substructural logic]] ([[SEoP][https://plato.stanford.edu/entries/logic-substructural/]]).
+
+** local vs global form
+We can specify introduction and elimination rules with gamma - global form, or only with things that are imortant to them - local form.
+Local form can interpreted as saying that given rules applies in any context. ([[https://youtu.be/L37jQy7gxH4?t=1774][29:34 HoTT lecture2]])
