@@ -85,6 +85,6 @@ HoTT is synthetic approach.
 
 This is enough to encode all known mathematical constructions in particular forms of proofs.
 
-- Axiomatic Freedom of Constructive Mathematics ([https://www.youtube.com/watch?v=u92V0OMgvhM&t=2620s][43:40 lecture 1]]) [[https://en.wikipedia.org/wiki/Brouwer%E2%80%93Hilbert_controversy][Hilbert was against intuitionizm]] because he thought that Brouwer is negating existing mathematics.
+- Axiomatic Freedom of Constructive Mathematics ([[https://www.youtube.com/watch?v=u92V0OMgvhM&t=2620s][43:40 lecture 1]]) [[https://en.wikipedia.org/wiki/Brouwer%E2%80%93Hilbert_controversy][Hilbert was against intuitionizm]] because he thought that Brouwer is negating existing mathematics.
 Type theory is compatible with rest of mathematics. Type theory uses fewer assumptions - it does not uses [[https://ncatlab.org/nlab/show/excluded+middle][law of excluded middle]] (LEM).
 You can introduce new axioms like LEM.
