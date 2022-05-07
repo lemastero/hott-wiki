@@ -1,0 +1,98 @@
+* Intuitionistic propositional Logic (IPL)
+- [[https://plato.stanford.edu/entries/logic-intuitionistic/][SEoP]], [[https://ncatlab.org/nlab/show/intuitionistic+logic][nLab - Intuitionistic Logic]], [[https://ncatlab.org/nlab/show/propositional+logic][nLab propositional Logic]]
+- [[https://www.youtube.com/watch?v=u92V0OMgvhM&t=3525s][58:46 HoTT lecture 1]]
+- "logic as if people matters" (so as in Brouwers intuitionism program)
+- [[https://ncatlab.org/nlab/show/judgment][judgements]]
+| A prop | A is proposition | A is well formed  |
+| A true | A is a true proposition | A has a proof |
+
+We do the same in proof theory:
+When state theorem e.g. every natural number can be written as product of prime numbers.
+We immediately provide proof.
+
+- Open endedness
+We cannot say that every theorem it is either true or false. There is infinitely many theorems,
+and only finetly many people who can do proofs.
+
+* Negative fragment of IPL
+- [[https://www.youtube.com/watch?v=u92V0OMgvhM&t=3961s][1:06:04 HoTT lecture 1]]
+- In *classical logic* we assume there is only two propositons *T true* and *F false* and write proof tables to define logical connectives.
+In constructive logic propositions have information (computational) content and we do not identify them as just being true or false.
+
+** truth
+
+#+BEGIN_SRC
+------- (TF)
+T propo
+#+END_SRC
+
+truth introduction rule
+
+#+BEGIN_SRC
+------- (TI)
+T true
+#+END_SRC
+
+no T-elimin rules
+
+** conjunction (and) \wedge
+[[https://www.youtube.com/watch?v=u92V0OMgvhM&t=4167s][1:09:27 HoTT lecture 1]]
+
+#+BEGIN_SRC
+A prop  A prop
+--------------- (^F)
+A ^ B prop
+#+END_SRC
+
+#+BEGIN_SRC
+A true  B true
+--------------- (^I)
+A ^ B true
+#+END_SRC
+
+#+BEGIN_SRC
+A ^ B true
+--------------- (^E1)
+A true
+#+END_SRC
+
+#+BEGIN_SRC
+A ^ B true
+--------------- (^E2)
+B true
+#+END_SRC
+
+* entailment (logical consequence) \sup
+
+[[https://www.youtube.com/watch?v=u92V0OMgvhM&t=4281s][1:11:22 HoTT lecture 1]]
+
+#+BEGIN_SRC
+A prop  B prop
+--------------- (⊃F)
+A ⊃ B prop
+#+END_SRC
+
+#+BEGIN_SRC
+A true ⊢  B true
+--------------- (⊃I)
+A ⊃ B true
+#+END_SRC
+
+we could say:
+
+#+BEGIN_SRC
+A ⊃ B true 
+--------------- 
+A true ⊢  B true
+#+END_SRC
+
+but usually we use curried verion ([[https://ncatlab.org/nlab/show/modus+ponens][modus ponens]])
+
+#+BEGIN_SRC
+A ⊃ B true  A true
+------------------ (⊃E)
+B true
+#+END_SRC
+
+Logical entailment is prior to implication. In Hilbert formulation of logic this distinction is not done.
+
