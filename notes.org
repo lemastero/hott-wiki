@@ -1,0 +1,90 @@
+* [[http://www.cs.cmu.edu/~rwh/courses/hott/][15-819 Homotopy Type Theory]]
+
+** 15-819 Lecture 1
+- it is possible to go through material by feeding proof checker random things without understanding math ([[https://www.youtube.com/watch?v=u92V0OMgvhM&t=429s][7:09 lecture 1]])
+- learning directly from HoTT book might hard without background in TT,
+  HoTT expands some ideas form TT ([[https://www.youtube.com/watch?v=u92V0OMgvhM&t=545s][9:05 lecture 1]])
+- motivation from [[https://ncatlab.org/nlab/show/homotopy+theory][homotopy theory]] ([[https://ncatlab.org/nlab/show/algebraic+topology][algebraic topology]])
+- HoTT is study of equality and constructive type theory
+
+** [[https://ncatlab.org/nlab/show/intuitionistic+type+theory][Intuitionistic Type Theory]] (TT)
+- [[https://www.youtube.com/watch?v=u92V0OMgvhM&t=666s][11:06]]
+- [[https://en.wikipedia.org/wiki/Per_Martin-L%C3%B6f][Per Martin-Löf]]
+- analysis and expansion of [[https://en.wikipedia.org/wiki/L._E._J._Brouwer][Brouwer's]] [[https://en.wikipedia.org/wiki/Intuitionism][intuitionism]] program
+ 1. Mathematics is human activity -> language to communicate math concepts
+ 2. Fundamental human capability of doing is step by step procedure (*algorithm*) to perform *construction*. To say something about infinity we describe construction.
+
+([[https://www.youtube.com/watch?v=u92V0OMgvhM&t=1357s][22:37 lecture 1]]) Imprtant conclusion proofs are form of construction.
+[[https://ncatlab.org/nlab/show/proof+relevance][proof relevance]] proofs are not just used to justify theorems and throw away.
+They are objects of interest in mathematics.
+Proofs are step by step procedures so (programs).
+
+(TODO) Formal proofs are not proofs. Formal proof is limiting, you enumerate what constitute a proof but Goodle incomplates theorem say that there is proof that is outside of realm of formal proofs.
+
+
+** [[https://ncatlab.org/nlab/show/intensional+type+theory][Intensional Type Theory]] (ITT)
+- basic theory those lecture use
+
+** [[https://ncatlab.org/nlab/show/extensional+type+theory][Extensional Type Theory]] (ETT)
+- ETT = ITT + ER + UIP
+*UIP* [[https://ncatlab.org/nlab/show/axiom+UIP][uniqueness of identity proofs]]
+
+*ER* equality reflection
+
+- constructive theory of sets
+- types are sets
+- [[https://www.nuprl.org/][NuPRL]]
+- expands on [[https://ncatlab.org/nlab/show/Bishop%27s+constructive+mathematics][Bishop's constructive set theory]]
+
+** [[https://ncatlab.org/nlab/show/homotopy+type+theory][Homotopy Type Theory]] (HoTT)
+- HOTT = ITT + HITs
+
+HITs [[https://ncatlab.org/nlab/show/higher+inductive+type][higher inductive types]]
+
+UA [[https://ncatlab.org/nlab/show/univalence+axiom][univalence axiom]]
+Equations
+
+There is relation between proofs of equations and paths in a space (or [[https://ncatlab.org/nlab/show/homotopy][homotopies]])
+
+- constructive theory of weak \infty-groupoids
+- types are (topological) spaces
+
+** synthetic vs analytic approach
+
+- [[https://www.youtube.com/watch?v=u92V0OMgvhM&t=1843s][30:44 lecture 1]]
+
+- TT way of doing proofs (in homotopy theory) is ([[https://www.youtube.com/watch?v=u92V0OMgvhM&t=1725s][28:45 lecture 1]]):
+ - more consise and more elegant
+ - more general (fewer assumptions)
+ - mechanisable (you can do it on computer)
+
+#+TBLNAME: synthetic-vs-analytic-math
+
+| *branch of math* | *synthetic*            | *analytic* |
+|------------------+------------------------+------------|
+| geometry         | [[https://en.wikipedia.org/wiki/Synthetic_geometry][synthetic geometry]] [[https://en.wikipedia.org/wiki/Euclid][Euclid]] (lines, points, ...) axioms of those and develop | [[https://en.wikipedia.org/wiki/Analytic_geometry][analytic geometry]] by [[https://en.wikipedia.org/wiki/Ren%C3%A9_Descartes][Descartes]] sets of points on plane, use properties of real numbers  |
+| homotopy theory  | [[https://ncatlab.org/nlab/show/model+category][Quillen model category]] or HoTT | start of unit interval on real line and reason about spaces |
+| programming language theory | [[http://twelf.org/wiki/LF][LF/Twelf]]    | Coq |
+
+HoTT is synthetic approach.
+
+** types
+([[https://www.youtube.com/watch?v=u92V0OMgvhM&t=2185s][36:25 lecture 1]])
+
+*Type theory* is ana analysis and codification of Brouwers intuitionism drawing on [[https://en.wikipedia.org/wiki/Gerhard_Gentzen][Gentzen]]s insights in proof theory. 
+
+*Type* say what are acceptable constructionsb by specifying:
+- introduction rules (how to create construction)
+- elimination rules (how to take apart; how to use)
+
+*inversion principle* (principle of conservation of proofs) that elim is post inverse to intor; you can take out what you put in; how to compute
+
+| introduction, elimination | inversion principle |
+| what are constructions | how to compute |
+| statics | dynamics |
+
+This is enough to encode all known mathematical constructions in particular forms of proofs.
+
+- Axiomatic Freedom of Constructive Mathematics ([https://www.youtube.com/watch?v=u92V0OMgvhM&t=2620s][43:40 lecture 1]]) [[https://en.wikipedia.org/wiki/Brouwer%E2%80%93Hilbert_controversy][Hilbert was against intuitionizm]] because he thought that Brouwer is negating existing mathematics.
+Type theory is compatible with rest of mathematics. Type theory uses fewer assumptions - it does not uses [[https://ncatlab.org/nlab/show/excluded+middle][law of excluded middle]] (LEM).
+You can introduce new axioms like LEM.
