@@ -175,37 +175,3 @@ If we omit any of the assumptions 3-5 we have [[https://ncatlab.org/nlab/show/su
 We can specify introduction and elimination rules with gamma - global form, or only with things that are imortant to them - local form.
 Local form can interpreted as saying that given rules applies in any context. ([[https://youtu.be/L37jQy7gxH4?t=1774][29:34 HoTT lecture2]])
 
-** order-theoretic formulation
-- ([[https://youtu.be/L37jQy7gxH4?t=2004][33:24 HoTT lecture 2]])
-
-
-
-TODO TODO TODO
-** positive fragment of IPL
-[[https://www.youtube.com/watch?v=L37jQy7gxH4][HoTT lecture 2]]
-
-** disjunction (or) \vee
-
-#+BEGIN_SRC
-A prop  A prop
---------------- ∨-form
-A ∨ B prop
-#+END_SRC
-
-#+BEGIN_SRC
-A prop
---------------- ∨-intro1
-A ∨ B prop
-#+END_SRC
-
-#+BEGIN_SRC
-B prop
---------------- ∨-intro2
-A ∨ B prop
-#+END_SRC
-
-#+BEGIN_SRC
-A ∨ B prop
---------------- ∨-elim
-TODO
-#+END_SRC
