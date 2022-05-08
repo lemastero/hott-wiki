@@ -1,0 +1,46 @@
+
+* Positive fragment of IPL
+- [[https://youtu.be/L37jQy7gxH4?list=PL1-2D_rCQBarjdqnM21sOsx09CtFSVO6Z&t=3019][50:19 HoTT lecture 2]]
+
+** falsehood (false or ⊥)
+
+#+BEGIN_SRC
+
+--------------- ⊥-F
+⊥ prop
+#+END_SRC
+
+no ⊥ introduction rule
+
+elimination rule
+
+#+BEGIN_SRC
+G ⊥ true
+--------------- ⊥-E
+A true
+#+END_SRC
+
+** disjunction (or) \vee
+
+#+BEGIN_SRC
+A prop   B prop
+--------------- ∨-F
+A ∨ B prop
+#+END_SRC
+
+#+BEGIN_SRC
+A true
+---------- ∨-I1
+A ∨ B true
+
+B true
+---------- ∨-I2
+A ∨ B true
+#+END_SRC
+
+#+BEGIN_SRC
+A ∨ B true   A true ⊢ C true  B true ⊢ C true
+---------------------------------------------- ∨-E
+C true
+#+END_SRC
+
