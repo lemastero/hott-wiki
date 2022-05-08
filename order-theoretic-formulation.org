@@ -1,4 +1,4 @@
-** order-theoretic formulation of negative fragment of IPL
+* order-theoretic formulation of negative fragment of IPL
 - ([[https://youtu.be/L37jQy7gxH4?t=2004][33:24 HoTT lecture 2]])
 
 Define order on propositions - *entailment relation* A <= B where A,B prop
@@ -44,7 +44,7 @@ Preorder is relation that is:
     C -- <= --> B
   #+end_src
   
- 4. greatest (final) element
+4. greatest (final) element
    #+BEGIN_SRC
     A <= T
    #+END_SRC
@@ -63,3 +63,61 @@ Preorder is relation that is:
    Univalence imply. that prop A is equal to prob B if A ⊢ B and B ⊢ A so interproovable propositions are regarded as equal.
    Mere propositions to be equal means they need to be equivalent.
    Univalence allow to have this principle explicitly and allow cmputer to understand it.
+   
+5. *exponential object* B^A or A ⊃ B ([[https://youtu.be/L37jQy7gxH4?list=PL1-2D_rCQBarjdqnM21sOsx09CtFSVO6Z&t=3527][58:47 HoTT lecture 2])
+  #+BEGIN_SRC
+  A ∧ (A ⊃ B) <= B
+  #+END_SRC
+  
+  and is least such thing (universal condition)
+  #+BEGIN_SRC
+  A ∧ C <= B 
+  ----------
+  C <= A ⊃ B
+  #+END_SRC
+  
+ 
+* order-theoretic formulation of positive fragment of IPL
+[[https://youtu.be/L37jQy7gxH4?list=PL1-2D_rCQBarjdqnM21sOsx09CtFSVO6Z&t=3321][55:21 HoTT lecture 2]]
+
+6. *Least element* (initial element) false imply everything
+  #+BEGIN_SRC
+  ⊥ <= A
+  #+END_SRC
+
+7. *Jonins* (least upper bounds)
+
+  #+BEGIN_SRC
+  ----------     
+  A <= A v B
+  
+  ----------
+  B <= A v B
+  
+  A <= C  B <= C
+  --------------
+  A v B <= C 
+  #+END_SRC
+
+  Join is a coproduct for a preorder
+  
+  #+begin_src mermaid :file test.png
+  flowchart TD
+    C -- <= --> A
+    C -- <= --> AB(A ^ B)
+    AB -- <= --> A
+    AB -- <= --> B
+    C -- <= --> B
+  #+end_src
+  
+  Together we have [[https://ncatlab.org/nlab/show/Heyting+algebra][Heyting algebra]] - lattice with exponentials. Every Hayting algebra is distributive.
+#+BEGIN_SRC
+A ∧ (B v C) ≃ (A v B) ∧ (A v C)
+#+END_SRC
+
+TODO exercise, hint
+- use [[https://ncatlab.org/nlab/show/Yoneda+lemma][Yoneda Lemma]]
+#+BEGIN_SRC
+(a <= b) iff forall x. x <= a then x <= b 
+#+END_SRC
+- use exponentials
