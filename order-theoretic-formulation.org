@@ -1,0 +1,65 @@
+** order-theoretic formulation of negative fragment of IPL
+- ([[https://youtu.be/L37jQy7gxH4?t=2004][33:24 HoTT lecture 2]])
+
+Define order on propositions - *entailment relation* A <= B where A,B prop
+#+BEGIN_SRC
+A true ⊢ B true
+#+END_SRC
+
+Preorder is relation that is:
+1. reflexive
+  #+BEGIN_SRC
+  A true ⊢ A true
+  #+END_SRC
+
+2. transitive
+  #+BEGIN_SRC
+  A true ⊢ B true   B true ⊢ C true
+  ------------------------------------
+  A true ⊢ C true
+  #+END_SRC
+
+3. there are meets given by conjunction
+  #+BEGIN_SRC
+  
+  ----------     
+  A ∧ B <= A
+  
+  ----------
+  A ∧ B <= B
+  
+  C <= A  C <= B
+  --------------
+  C <= A ∧ B
+  #+END_SRC
+  
+  Meet is a product for a preorder (it is degenerated category), as on following [[https://en.wikipedia.org/wiki/Hasse_diagram][Hasse diagram]]
+  
+  #+begin_src mermaid :file test.png
+  flowchart TD
+    C -- <= --> A
+    C -- <= --> AB(A ^ B)
+    AB -- <= --> A
+    AB -- <= --> B
+    C -- <= --> B
+  #+end_src
+  
+ 4. greatest (final) element
+   #+BEGIN_SRC
+    A <= T
+   #+END_SRC
+   
+   Conditions 1-4 means we have lower semilattice.
+   
+   ([[https://youtu.be/L37jQy7gxH4?list=PL1-2D_rCQBarjdqnM21sOsx09CtFSVO6Z&t=2399][39:59 HoTT lecture 2]]) Although usually semilattice is define as partial-order not preorder. Partial order has anti-symmetry: A <= B and B <= A then A = B.
+    #+BEGIN_SRC
+    A true ⊢ B true   A true ⊢ B true
+    ------------------------------------
+                  A ≃ B
+    #+END_SRC
+   We could use equality that is induced by preorder, or use equivalence classes.
+   
+   [[https://youtu.be/L37jQy7gxH4?list=PL1-2D_rCQBarjdqnM21sOsx09CtFSVO6Z&t=2652][44:12 HoTT lecture 2]]
+   Univalence imply. that prop A is equal to prob B if A ⊢ B and B ⊢ A so interproovable propositions are regarded as equal.
+   Mere propositions to be equal means they need to be equivalent.
+   Univalence allow to have this principle explicitly and allow cmputer to understand it.
