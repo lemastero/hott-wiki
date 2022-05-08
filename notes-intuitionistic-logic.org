@@ -44,29 +44,29 @@ conjunction formation rule
 
 #+BEGIN_SRC
 A prop  A prop
--------------- (^F)
-A ^ B prop
+-------------- (∧F)
+A ∧ B prop
 #+END_SRC
 
 conjunction introduction rule
 
 #+BEGIN_SRC
 A true  B true
---------------- (^I)
-A ^ B true
+--------------- (∧I)
+A ∧ B true
 #+END_SRC
 
 conjunction elimination rules
 
 #+BEGIN_SRC
-A ^ B true
------------ (^E1)
+A ∧ B true
+----------- (∧E1)
 A true
 #+END_SRC
 
 #+BEGIN_SRC
-A ^ B true
------------ (^E2)
+A ∧ B true
+----------- (∧E2)
 B true
 #+END_SRC
 
