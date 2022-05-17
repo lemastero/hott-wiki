@@ -1,17 +1,13 @@
--- https://github.com/martinescardo/TypeTopology/blob/master/source/SpartanMLTT.lagda
-
-{-
-# Homotpy Type Theory
-univalent mathematics vs classic mathematics
-
+{- univalent mathematics vs classic mathematics
+------------------------------------------------
 1. basic things are types not sets
 types are higher groupoids
 type of truth      is -1-groupoids  e.g. booleans
 type of N          is 0-groupoid    e.g. sets
-type of monoids    is 1-groupoid
-type of categories id 2-groupoid
+type of monoids    is 1-groupoid    ???
+type of categories id 2-groupoid    ???
 
-2. logic
+2. HoTT encode logic
 mathematical statemens are types not truth values (t.v. are special kind of type)
 logical operations are sepcial case of type operations
 mathematic is first and logic is derived
@@ -23,7 +19,6 @@ they can be true in many ways,
 e.g. for sets we want to know if they have the same objects,
 for monoid not only the same objects but does it preserve homomorphisms so m. isomorphism
 for categories we want equivalence of categories)
-
 
 value of equality ≡ is a identity type, not neccessarily a truth value
 identity type collect the ways mathematical objects are identified
@@ -48,6 +43,9 @@ HoTT do not assume:
 - principle of excluded middle (EM)
 but those axioms are consistent and can be assumed.
 Formulation of AOC and EM formulated inside HoTT differs from those in formulated in sets.
+
+Resources:
+  https://github.com/martinescardo/TypeTopology/blob/master/source/SpartanMLTT.lagda
 -}
 
 {-# OPTIONS --without-K --exact-split --safe #-}
@@ -56,31 +54,13 @@ module HoTT-UF-1-Types where
 
 open import HoTT-UF-0-Universes public
 
-{-
-# Spartan MLTT
-- empty type
-- one element type
-- type of natural numbers
-- type formers: binary sum, product, dependent product, dependent sum, identity type
+{- Spartan MLTT
+---------------
+- empty type (Nothing/Void/Zero)
+- one element type (Unit/One)
+- type of natural numbers (Nat)
+- type formers: binary sum (either), product (tuple), dependent product, dependent sum, identity type
 - universes
-
-## Univeses
-
-Usages of universes:
-- define properties of elements X as families of types indexed by a this type X -> U
-- define mathematical structures: monoids, groups, topological spaces, categories
-
-There is hierarchy of universes U0, U1, ....
-if groups lives in one universe then type of groups live in bigger universe
-given category in one universe the presheaf category lives in larger universe
-
-U0 is a type in U1
-U1 is a type in U2
-...
-
-operations on universes:
-- successor
-- least upper bound (max)
 -}
 
 {-
@@ -92,49 +72,51 @@ homotopy theory: space that have no points
 
 formation rules:
 
-------
-0 type
+G ctx
+----------- 0-FORM
+G |- 0 : U
 
 no introduction rules
 
-elimination rules:
 
-is as empty as any other type;
+If I get element of 0
 I can construct whatever I like (there is morphism to any other object)
 
-e:0  A type
-------------
+e:Zero  A type
+-------------- Zero-ELIM
 absurd(e): A
 
 I can proove any equation I like (uniqueness of morphism to any object):
+TODO study this later (covered by lectures by Andrey Bauer) WTF is this?
 
-e:0  s:A  t:A  A type
----------------------
+e:Zero  s:A  t:A  A type
+-------------------------
   s ≡ t
 
 no equations
 
 HoTT-UF M. Escardo https://www.cs.bham.ac.uk/~mhe/HoTT-UF-in-Agda-Lecture-Notes/HoTT-UF-Agda.html#emptytype
-HoTT Book https://homotopytypetheory.org/book/ A.2.7
+HoTT Book https://homotopytypetheory.org/book/ A.2.3
 -}
-data Void : Type Universe0 where
+data Zero : Type Universe0 where
 
--- property A of Void holds vacuously for every value from Void
-Void-induction : (A : Void -> Type UniverseU)
- -> (x : Void)
- -> A x
-Void-induction A ()
-
-Void-recursion : (A : Type UniverseU) -> Void -> A
-Void-recursion A a = Void-induction (\ _ -> A) a
+-- TODO this is dependent version of absurd? is this universal property of 0 ???
+-- property of Zero holds (vacuously) for every value from Zero
+Zero-induction : (ZeroProperty : Zero -> Type UniverseU)
+ -> (x : Zero)
+ -> ZeroProperty x
+Zero-induction A ()
 
 -- type is empty when we have a function to the empty type
 not : Type UniverseU -> Type UniverseU
-not X = X -> Void
+not X = X -> Zero
 
--- unique function from Void to any type A
-absurd : (A : Type UniverseU) -> Void -> A
-absurd = Void-recursion
+-- unique function from Zero to any type A
+Zero-recursion : (A : Type UniverseU) -> Zero -> A
+Zero-recursion A a = Zero-induction (\ _ -> A) a
+
+absurd         : (A : Type UniverseU) -> Zero -> A
+absurd = Zero-recursion
 
 {-
 type theory: one element type
@@ -143,14 +125,10 @@ set theory: one element set (singleton)
 category theory: terminal object
 homotopy theory: one-point space
 
-formation rules:
-
----------
+------- One-FORM
 1 type
 
-introduction rules:
-
-------
+------ One-INTRO
 * : 1
 
 no elimination rules
@@ -170,25 +148,25 @@ s ≡1 *
 HoTT Book https://homotopytypetheory.org/book/ A.2.8
 HoTT-UF M. Escardo https://www.cs.bham.ac.uk/~mhe/HoTT-UF-in-Agda-Lecture-Notes/HoTT-UF-Agda.html#onepointtype
 -}
-data Unit : Type Universe0 where
-  <> : Unit
+data One : Type Universe0 where
+  <> : One
 
--- for any property P of type Unit, if P(<>) it holds for <>
--- then P(x) it holds for all x: Unit
-Unit-induction : (P : Unit -> Type UniverseU)
+-- for any property P of type One, if P(<>) it holds for <>
+-- then P(x) it holds for all x: One
+One-induction : (P : One -> Type UniverseU)
   -> P <>
-  -> (x : Unit)
+  -> (x : One)
   -> P x
-Unit-induction P a <> = a
+One-induction P a <> = a
 
--- special case of Unit-induction when P do not depend on x
-Unit-recursion : (P : Type UniverseU) ->
+-- special case of One-induction when P do not depend on x
+One-recursion : (P : Type UniverseU) ->
   P ->
-  (Unit -> P)
-Unit-recursion P a x = Unit-induction (\ _ -> P) a x
+  (One -> P)
+One-recursion P a x = One-induction (\ _ -> P) a x
 
--- unique function from any type to Unit
-unit : {A : Type UniverseU} -> A -> Unit
+-- unique function from any type to One
+unit : {A : Type UniverseU} -> A -> One
 unit x = <>
 
 {-
@@ -245,15 +223,45 @@ data _+_ (X : Type UniverseU) (Y : Type UniverseV) : Type (UniverseU umax Univer
 +-induction A f g (Left x) = f x
 +-induction A f g (Right y) = g y
 
+id-right-Zero+ : {A : Type UniverseU} -> A + Zero -> A
+id-right-Zero+ = {!   !}
+
+id-left-Zero+ : {A : Type UniverseU} -> Zero + A -> A
+id-left-Zero+ x = {!   !}
+
+comm-+ : {A B : Type UniverseU} -> A + B -> B + A
+comm-+ x = {!   !}
+
+assocLR-+ : {A B C : Type UniverseU} -> (A + B) + C -> A + (B + C)
+assocLR-+ x = {!   !}
+
+assocRL-+ : {A B C : Type UniverseU} -> A + (B + C) -> (A + B) + C
+assocRL-+ x = {!   !}
+
 {-
 binary product
 category theory: product
 -}
-record _*_ (S : Set)(T : Set) : Set where
+record _*_ (S : Type UniverseU)(T : Type UniverseV) : Type (UniverseU umax UniverseV)  where
   constructor _,_
   field
     fst : S
     snd : T
+
+right-unit-One* : {A : Type UniverseU} -> (A * One) -> A
+right-unit-One* x = {!   !}
+
+left-unit-One* : {A : Type UniverseU} -> One * A -> A
+left-unit-One* x = {!   !}
+
+comm-* : {A : Type UniverseU}{B : Type UniverseU} -> A * B -> B * A
+comm-* x = {!   !}
+
+assocLR-* : {A B C : Set} -> (A * B) * C -> A * (B * C)
+assocLR-* x = {!   !}
+
+assocRL-* : {A B C : Type UniverseU} -> A * (B * C) -> (A * B) * C
+assocRL-* x = {!   !}
 
 {-
 type theory: 2 element type
@@ -275,9 +283,9 @@ Bool-induction : (A : Bool -> Type UniverseU)
 Bool-induction A aT aF True = aT
 Bool-induction A aT aF False = aF
 
--- type Bool formulated using binary sum and unit type
+-- type Bool formulated using binary sum and One type
 2T : Type Universe0
-2T = Unit + Unit
+2T = One + One
 
 {- type of natural numbers
 
@@ -304,10 +312,19 @@ HoTT-UF M. Escardo https://www.cs.bham.ac.uk/~mhe/HoTT-UF-in-Agda-Lecture-Notes/
 HoTT Book https://homotopytypetheory.org/book/ A.2.9
 -}
 data Nat : Type Universe0 where
-  Zero : Nat
+  ZeroN : Nat
   Succ : Nat -> Nat
 
 {-# BUILTIN NATURAL Nat #-}
+
+_+N_ : Nat -> Nat -> Nat
+a +N b     = ?
+
+_*N_ : Nat -> Nat -> Nat
+a *N b     = ?
+
+_^N_ : Nat -> Nat -> Nat
+a ^N b       = ?
 
 {-
 Induction principle
@@ -328,7 +345,7 @@ induction setp  f : (n : Nat) -> P n -> P (Succ n)
 number n say how to get an element of type A n by primitve recursion
 -}
 Nat-induction : (P : Nat -> Type UniverseU)
- -> P Zero
+ -> P ZeroN
  -> ((n : Nat) -> P n -> P (Succ n))
  -> (n : Nat) -> P n
 Nat-induction P s t = h
