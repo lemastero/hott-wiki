@@ -1,0 +1,171 @@
+* Constructive Logic (Intuitionistic Logic)
+
+** judgements
+
+- judgements
+  - basic (atomic) judgements
+    #+BEGIN_SRC  
+    A prop
+    A true
+    #+END_SRC
+
+    | A prop | A is proposition | A is well formed proposition  |
+    | A true | A is a true proposition | A has a proof |
+
+  - compund judgements
+    #+BEGIN_SRC  
+    A true, A2 true, ..., An true ⊢ B
+    #+END_SRC
+
+** truth
+
+truth formation rule
+
+#+BEGIN_SRC
+------- (TF)
+T propo
+#+END_SRC
+
+truth introduction rule
+
+#+BEGIN_SRC
+------- (TI)
+T true
+#+END_SRC
+
+no truth elimination rules
+
+** conjunction (and) \wedge
+
+conjunction formation rule
+
+#+BEGIN_SRC
+A prop  A prop
+-------------- (∧F)
+A ∧ B prop
+#+END_SRC
+
+conjunction introduction rule
+
+#+BEGIN_SRC
+A true  B true
+--------------- (∧I)
+A ∧ B true
+#+END_SRC
+
+conjunction elimination rules
+
+#+BEGIN_SRC
+A ∧ B true
+----------- (∧E1)
+A true
+#+END_SRC
+
+#+BEGIN_SRC
+A ∧ B true
+----------- (∧E2)
+B true
+#+END_SRC
+
+* implication \sup
+
+#+BEGIN_SRC
+A prop  B prop
+--------------- (⊃F)
+A ⊃ B prop
+#+END_SRC
+
+#+BEGIN_SRC
+A true ⊢  B true
+----------------- (⊃I)
+A ⊃ B true
+#+END_SRC
+
+We could say:
+
+#+BEGIN_SRC
+A ⊃ B true 
+---------------- 
+A true ⊢  B true
+#+END_SRC
+
+but usually we use curried verion ([[https://ncatlab.org/nlab/show/modus+ponens][modus ponens]]):
+
+#+BEGIN_SRC
+A ⊃ B true  A true
+------------------- (⊃E)
+B true
+#+END_SRC
+
+** compund judgements
+
+#+BEGIN_SRC  
+A true, A2 true, ..., An true ⊢ B
+#+END_SRC
+
+A true ⊢ B true is entailment (logical consequence, hypothetical judgement).
+
+** structural propertis of entailment
+1. *reflexivity* (identity)
+  #+BEGIN_SRC 
+  A true ⊢ A true (R)
+  #+END_SRC
+  
+  Whatever I assume it follows from this assumption.
+
+2. *transitivity* (composition)
+  #+BEGIN_SRC 
+  Γ1 ⊢ A true   Γ2, A true ⊢ B true
+  ----------------------------------- (T)
+  Γ1 Γ2 ⊢ B true
+  #+END_SRC
+  
+  If I know A is true and I assume A is true to show that B is true,
+  then I can simpliy and say B is true.
+  If I use lemma A and prove theorem B using this lemma, I can inline lemma in proove of B.
+  
+3. *weakening*
+  #+BEGIN_SRC
+  Γ ⊢ A true
+  ------------------- (W)
+  Γ, B true ⊢ A true
+  #+END_SRC
+  
+  If I proove someting (A) then I could proove it using extra assumption B.
+  In [[https://ncatlab.org/nlab/show/relevance+logic][relevance logic]] ([[https://plato.stanford.edu/entries/logic-relevance/][SEoP]]) we omit this property.
+  We would have relative entailment where we say that sth relies on all assumption.
+  
+4. *contraction*
+  #+BEGIN_SRC
+  Γ, A true, A true ⊢ B true 
+  ----------------------- (C)
+  Γ, A true ⊢ B true
+  #+END_SRC
+  
+  If I state lemma twice I could just state it once.
+  In relevance (linear) logic we could deny this principle - we care how many times given assumption is used.
+
+5. *exchange* (permutation)
+  #+BEGIN_SRC
+  Γ ⊢ A true 
+  ----------------------- (X)
+  perm(Γ) ⊢ A true
+  #+END_SRC
+  If I have proof of theorem from some assumptions, then I can use any permutation of those assumptions.
+
+If we omit any of the assumptions 3-5 we have [[https://ncatlab.org/nlab/show/substructural+logic][substructural logic @ nLab]] ([[https://plato.stanford.edu/entries/logic-substructural/][substructural logic @ SEoP]]).
+
+** harmony
+local soundness - elimination rules are not too strong - if we introduce connective and then eliminate we do not gain any new knowledge; reduction
+local completeness - elimination rules are not too weak - if we eliminate connective then we can re-construct it (using introduction rules); expansion
+harmony := local soundness + local completeness
+
+** TODO existential quantification
+TODO
+
+** TODO universal quantification
+TODO
+
+** TODO cut elimination
+TODO
+
