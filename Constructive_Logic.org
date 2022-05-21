@@ -23,7 +23,7 @@ truth formation rule
 
 #+BEGIN_SRC
 ------- (TF)
-T propo
+T prop
 #+END_SRC
 
 truth introduction rule
