@@ -97,6 +97,48 @@ A ⊃ B true  A true
 B true
 #+END_SRC
 
+** falsehood (false or ⊥)
+
+#+BEGIN_SRC
+
+--------- ⊥F
+⊥ prop
+#+END_SRC
+
+no ⊥ introduction rule
+
+elimination rule
+
+#+BEGIN_SRC
+G ⊥ true
+---------- ⊥E
+A true
+#+END_SRC
+
+** disjunction (or) \vee
+
+#+BEGIN_SRC
+A prop   B prop
+---------------- ∨F
+A ∨ B prop
+#+END_SRC
+
+#+BEGIN_SRC
+A true
+----------- ∨I1
+A ∨ B true
+
+B true
+----------- ∨I2
+A ∨ B true
+#+END_SRC
+
+#+BEGIN_SRC
+A ∨ B true   A true ⊢ C true  B true ⊢ C true
+---------------------------------------------- ∨-E
+C true
+#+END_SRC
+
 ** compund judgements
 
 #+BEGIN_SRC  
@@ -138,7 +180,7 @@ A true ⊢ B true is entailment (logical consequence, hypothetical judgement).
 4. *contraction*
   #+BEGIN_SRC
   Γ, A true, A true ⊢ B true 
-  ----------------------- (C)
+  --------------------------- (C)
   Γ, A true ⊢ B true
   #+END_SRC
   
@@ -148,7 +190,7 @@ A true ⊢ B true is entailment (logical consequence, hypothetical judgement).
 5. *exchange* (permutation)
   #+BEGIN_SRC
   Γ ⊢ A true 
-  ----------------------- (X)
+  ----------------- (X)
   perm(Γ) ⊢ A true
   #+END_SRC
   If I have proof of theorem from some assumptions, then I can use any permutation of those assumptions.
@@ -168,4 +210,3 @@ TODO
 
 ** TODO cut elimination
 TODO
-
