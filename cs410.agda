@@ -1,5 +1,3 @@
-{-# OPTIONS --type-in-type #-}
-
 module cs410one where
 
 {-
@@ -17,12 +15,10 @@ C-c c-n normalize (give value to expression)
 -- Ctrol-c Ctrl-x
 -}
 
-
+{-
 ----------------------------------
 -- propositions as types
 
-
-{-
 types                theorems
 values of the type   proofs of theorem
 Zero                 false
@@ -32,7 +28,6 @@ _*_                  and
 ->                   implication
 
 proof : proofs of hypothesis -> proof of conclusion
--}
 
 ----------------------------------
 -- 0 1 product coproduct types
@@ -156,8 +151,8 @@ combinatorS : forall {S T E : Set} -> (E -> (S -> T)) -> (E -> S) -> E -> T
 combinatorS = \ est es e -> (est e) (es e)
 
 -- Haskell works
--- let s =  est es e -> 9est) (es e)
--- let k =  a e -> a
+-- let s = \ es e -> est (es e)
+-- let k = \ a e -> a
 -- let i = s k k
 -- :t i
 
@@ -590,7 +585,7 @@ product-is-product-from-sigma (S , T) = record { fst = S ; snd = T }
 
 -- TODO use identity type for product equivalence
 
-difference : (m n : Nat) -> m >= n -> Sg Nat \ d -> m == (n +N d)
+difference : (m n : Nat) -> m >= n -> Sg Nat \ d -> m == (n +N d)
 difference m zero p = m , refl m
 difference zero (suc n) ()
 difference (suc m) (suc n) p with difference m n p
