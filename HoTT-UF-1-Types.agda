@@ -102,9 +102,10 @@ data Zero : Type Universe0 where
 
 -- TODO this is dependent version of absurd? is this universal property of 0 ???
 -- property of Zero holds (vacuously) for every value from Zero
-Zero-induction : (ZeroProperty : Zero -> Type UniverseU)
- -> (x : Zero)
- -> ZeroProperty x
+Zero-induction : (P : Zero -> Type UniverseU)
+                          -- no base case
+                          -- no inductive case
+ -> (x : Zero) -> P x     -- property P holds for all elements of type Zero
 Zero-induction A ()
 
 -- type is empty when we have a function to the empty type
@@ -154,9 +155,9 @@ data One : Type Universe0 where
 -- for any property P of type One, if P(<>) it holds for <>
 -- then P(x) it holds for all x: One
 One-induction : (P : One -> Type UniverseU)
-  -> P <>
-  -> (x : One)
-  -> P x
+  -> P <>               -- base case
+                        -- no inductive case
+  -> (x : One) -> P x   -- property P holds for every element of One
 One-induction P a <> = a
 
 -- special case of One-induction when P do not depend on x
@@ -213,21 +214,24 @@ HoTT-UF M. Escardo https://www.cs.bham.ac.uk/~mhe/HoTT-UF-in-Agda-Lecture-Notes/
 HoTT Book https://homotopytypetheory.org/book/ A.2.6
 -}
 data _+_ (X : Type UniverseU) (Y : Type UniverseV) : Type (UniverseU umax UniverseV) where
- Left : X → X + Y
- Right : Y → X + Y
+ Left : X -> X + Y
+ Right : Y -> X + Y
 
-+-induction : {X : Type UniverseU} {Y : Type UniverseV} (A : X + Y -> Type UniverseW)
- -> ((x : X) -> A (Left x))
- -> ((y : Y) -> A (Right y))
- -> (z : X + Y) -> A z
-+-induction A f g (Left x) = f x
-+-induction A f g (Right y) = g y
+infixr 20 _+_
 
-id-right-Zero+ : {A : Type UniverseU} -> A + Zero -> A
-id-right-Zero+ = {!   !}
++-induction : {X : Type UniverseU} {Y : Type UniverseV} (P : X + Y -> Type UniverseW)
+ -> ((x : X) -> P (Left  x))   -- base case Left
+ -> ((y : Y) -> P (Right y))   -- base case Right
+                               -- no inductive case
+ -> (z : X + Y) -> P z         -- property P holds for all elements of X + Y
++-induction P f _ (Left x) = f x
++-induction P _ g (Right y) = g y
 
-id-left-Zero+ : {A : Type UniverseU} -> Zero + A -> A
-id-left-Zero+ x = {!   !}
++0-right-id : {A : Type UniverseU} -> A + Zero -> A
++0-right-id = {!   !}
+
++0-left-id : {A : Type UniverseU} -> Zero + A -> A
++0-left-id x = {!   !}
 
 comm-+ : {A B : Type UniverseU} -> A + B -> B + A
 comm-+ x = {!   !}
@@ -247,6 +251,8 @@ record _*_ (S : Type UniverseU)(T : Type UniverseV) : Type (UniverseU umax Unive
   field
     fst : S
     snd : T
+
+-- TODO * induction, recursion,
 
 right-unit-One* : {A : Type UniverseU} -> (A * One) -> A
 right-unit-One* x = {!   !}
@@ -275,17 +281,36 @@ data Bool : Type Universe0 where
   True : Bool
   False : Bool
 
+-- intuition we can draw truth table
+--        | b | P b |
+--  true  |   |     |
+--  false |   |     |
 Bool-induction : (A : Bool -> Type UniverseU)
- -> A True
- -> A False
- -> (n : Bool)
- -> A n
+ -> A True             -- base case True
+ -> A False            -- base case False
+ -> (b : Bool) -> A b  -- property P holds for all elements b
 Bool-induction A aT aF True = aT
 Bool-induction A aT aF False = aF
+
+Bool-recursion : (A : Type UniverseU)
+ -> A
+ -> (Bool -> A -> A)
+ -> Bool -> A
+-- Bool-recursion A a f b = f b a -- TODO why not this
+Bool-recursion A a f b = a
+
+--Nat-recursion X = Nat-induction (\ _ -> X)
 
 -- type Bool formulated using binary sum and One type
 2T : Type Universe0
 2T = One + One
+
+data YesPerhapsNo : Type Universe0 where
+  Yes : YesPerhapsNo
+  Perhaps : YesPerhapsNo
+  No : YesPerhapsNo
+
+-- TODO YesMaybeNo induction recursion
 
 {- type of natural numbers
 
@@ -317,14 +342,15 @@ data Nat : Type Universe0 where
 
 {-# BUILTIN NATURAL Nat #-}
 
+
 _+N_ : Nat -> Nat -> Nat
-a +N b     = ?
+a +N b     = {!   !}
 
 _*N_ : Nat -> Nat -> Nat
-a *N b     = ?
+a *N b     = {!   !}
 
 _^N_ : Nat -> Nat -> Nat
-a ^N b       = ?
+a ^N b       = {!   !}
 
 {-
 Induction principle
@@ -345,14 +371,21 @@ induction setp  f : (n : Nat) -> P n -> P (Succ n)
 number n say how to get an element of type A n by primitve recursion
 -}
 Nat-induction : (P : Nat -> Type UniverseU)
- -> P ZeroN
- -> ((n : Nat) -> P n -> P (Succ n))
- -> (n : Nat) -> P n
+ -> P ZeroN                           -- base case
+ -> ((n : Nat) -> P n -> P (Succ n))  -- inductive case
+ -> (n : Nat) -> P n                  -- property P holds for all element of N
 Nat-induction P s t = h
   where
      h : (k : Nat) -> P k
      h 0        = s
      h (Succ n) = t n (h n)
+
+Nat-induction-2 : (P : Nat -> Type UniverseU)
+ -> P ZeroN                           -- base case
+ -> ((n : Nat) -> P n -> P (Succ n))  -- inductive case
+ -> (n : Nat) -> P n                  -- property P holds for all element of N
+Nat-induction-2 P P0 t 0 = P0
+Nat-induction-2 P P0 t (Succ n) = t n (Nat-induction-2 P P0 t n) -- TODO is this correct ?
 
 {-
 Recurson principle is induction principle specialized to the clase
@@ -362,12 +395,113 @@ Nat-recursion : (A : Type UniverseU)
  -> A
  -> (Nat -> A -> A)
  -> Nat -> A
-Nat-recursion X = Nat-induction (\ _ -> X)
+Nat-recursion X = Nat-induction (\ _ -> X) -- TODO implement differently
 
 Nat-iteration : (A : Type UniverseU)
  -> A
  -> (A -> A)
  -> Nat -> A
-Nat-iteration A x f = Nat-recursion A x (\ _ x -> f x)
+Nat-iteration A x f = Nat-recursion A x (\ _ x -> f x) -- TODO implement differently
 
-infixr 20 _+_
+data Fibonacci : Type Universe0 where
+  fib0 : Fibonacci
+  fib1 : Fibonacci
+  nextFib : Fibonacci -> Fibonacci -> Fibonacci
+
+Fibonacci-induction : (P : Fibonacci -> Type UniverseU)
+  -> P fib0
+  -> P fib1
+  -> ((f1 : Fibonacci) -> (f2 : Fibonacci) -> P f1 -> P f2 -> P (nextFib f1 f2))
+  -> (f : Fibonacci) -> P f
+Fibonacci-induction P Pf0 Pf1 ffPff fib0 = Pf0
+Fibonacci-induction P Pf0 Pf1 ffPff fib1 = Pf1
+Fibonacci-induction P Pf0 Pf1 ffPff (nextFib f1 f2) =
+  ffPff f1
+        f2
+        (Fibonacci-induction P Pf0 Pf1 ffPff f1)
+        (Fibonacci-induction P Pf0 Pf1 ffPff f2)
+
+-- TODO fib-recursion
+-- TODO fib-iteration
+
+-- TODO recursion, 1+X = Maybe X,
+data Maybe (X : Type UniverseU) : Type UniverseU where
+  Just : (x : X) -> Maybe X
+  Nothing : Maybe X
+
+Maybe-induction : {X : Type UniverseU} (P : Maybe X -> Type UniverseW)
+  -> ((x : X) -> P (Just  x))   -- base case Just x -> P (Just x)
+  -> P Nothing                  -- base case           P Nothing
+  -> (mx : Maybe X) -> P mx     -- property P holds for all Maybe X
+Maybe-induction P PJx PN (Just x) = PJx x
+Maybe-induction P _ PN Nothing = PN
+
+-- TODO recursion, 1 + Either == Wedge
+data Wedge (X : Type UniverseU)(Y : Type UniverseV) : Type (UniverseU umax UniverseV) where
+  nowhere : Wedge X Y
+  here : (x : X) -> Wedge X Y
+  there : (y : Y) -> Wedge X Y
+
+Wedge-induction : {X : Type UniverseU} {Y : Type UniverseV} (P : Wedge X Y -> Type UniverseW)
+ -> P nowhere
+ -> ((x : X) -> P (here x))
+ -> ((y : Y) -> P (there y))
+ -> (w : Wedge X Y) -> P w
+Wedge-induction P pn _ _ nowhere = pn
+Wedge-induction P _ ph _ (here x) = ph x
+Wedge-induction P _ _ pt (there y) = pt y
+
+-- TODO recursion, 1 + Pair == Smash
+data Smash (X : Type UniverseU) (Y : Type UniverseV) : Type (UniverseU umax UniverseV) where
+  nada : Smash X Y
+  smash : (x : X) -> (y : Y) -> Smash X Y
+
+Smash-induction : {X : Type UniverseU} {Y : Type UniverseV} (P : Smash X Y -> Type UniverseW)
+  -> P nada
+  -> ((x : X) -> (y : Y) -> P (smash x y))
+  -> (s : Smash X Y) -> P s
+Smash-induction P pn ps nada = pn
+Smash-induction P pn ps (smash x y) = ps x y
+
+-- TODO recursion, Pair + Either == These
+data These (X : Type UniverseU)(Y : Type UniverseV) : Type (UniverseU umax UniverseV) where
+  this : (x : X) -> These X Y
+  that : (y : Y) -> These X Y
+  these : (x : X) -> (y : Y) -> These X Y
+
+-- TODO induction
+These-induction : {X : Type UniverseU} {Y : Type UniverseV} (P : These X Y -> Type UniverseW)
+  -> ((x : X) -> P (this x))
+  -> ((y : Y) -> P (that y))
+  -> ((x : X) -> (y : Y) -> P (these x y))
+  -> (t : These X Y) -> P t
+These-induction P xpx ypy xypxy (this x) = xpx x
+These-induction P xpx ypy xypxy (that y) = ypy y
+These-induction P xpx ypy xypxy (these x y) = xypxy x y
+
+-- TODO recursion, 1 + These == Can
+data Can (X : Type UniverseU)(Y : Type UniverseV) : Type (UniverseU umax UniverseV) where
+  non : Can X Y
+  one : (x : X) -> Can X Y
+  eno : (y : Y) -> Can X Y
+  two : (x : X) -> (y : Y) -> Can X Y
+
+-- Fin n type of numbers 0 ... n-1
+data Fin : Nat -> Set where  -- TODO use UniverseU
+  fzero : {n : Nat} -> Fin (Succ n)          -- 0 belongs to every Fin n
+  fsucc : {n : Nat} -> Fin n -> Fin (Succ n) -- for all natural numbers n they are part of Fin (n+1)
+
+-- TODO Fin induction
+-- TODO Fin recursion
+-- TODO max fin
+-- TODO min fin
+
+-- TODO List
+
+-- TODO NonEmptyList
+
+-- TODO Vector
+
+-- TODO Function type
+-- TODO Function induction
+-- TODO Function recursion
