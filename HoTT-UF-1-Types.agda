@@ -228,19 +228,24 @@ infixr 20 _+_
 +-induction P _ g (Right y) = g y
 
 +0-right-id : {A : Type UniverseU} -> A + Zero -> A
-+0-right-id = {!   !}
++0-right-id (Left a) = a
 
 +0-left-id : {A : Type UniverseU} -> Zero + A -> A
-+0-left-id x = {!   !}
++0-left-id (Right a) = a
 
 comm-+ : {A B : Type UniverseU} -> A + B -> B + A
-comm-+ x = {!   !}
+comm-+ (Left a) = Right a
+comm-+ (Right b) = Left b
 
 assocLR-+ : {A B C : Type UniverseU} -> (A + B) + C -> A + (B + C)
-assocLR-+ x = {!   !}
+assocLR-+ (Left (Left a)) = Left a
+assocLR-+ (Left (Right b)) = Right (Left b)
+assocLR-+ (Right c) = Right (Right c)
 
 assocRL-+ : {A B C : Type UniverseU} -> A + (B + C) -> (A + B) + C
-assocRL-+ x = {!   !}
+assocRL-+ (Left a) = Left (Left a)
+assocRL-+ (Right (Left b)) = Left (Right b)
+assocRL-+ (Right (Right c)) = Right c
 
 {-
 binary product
@@ -255,19 +260,19 @@ record _*_ (S : Type UniverseU)(T : Type UniverseV) : Type (UniverseU umax Unive
 -- TODO * induction, recursion,
 
 right-unit-One* : {A : Type UniverseU} -> (A * One) -> A
-right-unit-One* x = {!   !}
+right-unit-One* (a , _) = a
 
 left-unit-One* : {A : Type UniverseU} -> One * A -> A
-left-unit-One* x = {!   !}
+left-unit-One* (_ , a) = a
 
 comm-* : {A : Type UniverseU}{B : Type UniverseU} -> A * B -> B * A
-comm-* x = {!   !}
+comm-* (a , b) = (b , a)
 
 assocLR-* : {A B C : Set} -> (A * B) * C -> A * (B * C)
-assocLR-* x = {!   !}
+assocLR-* ((a , b) , c) = (a , (b , c))
 
 assocRL-* : {A B C : Type UniverseU} -> A * (B * C) -> (A * B) * C
-assocRL-* x = {!   !}
+assocRL-* (a , (b , c)) = ((a , b) , c)
 
 {-
 type theory: 2 element type
@@ -342,16 +347,19 @@ data Nat : Type Universe0 where
 
 {-# BUILTIN NATURAL Nat #-}
 
-
+-- TODO pattern match on second for consistency with power
 _+N_ : Nat -> Nat -> Nat
-a +N b     = {!   !}
+n +N 0 = n
+n +N Succ m = Succ (n +N m)
 
+-- TODO pattern match on second arg for consistency with power
 _*N_ : Nat -> Nat -> Nat
-a *N b     = {!   !}
+0 *N n = 0
+Succ a *N n = n +N (a *N n)
 
 _^N_ : Nat -> Nat -> Nat
-a ^N b       = {!   !}
-
+a ^N ZeroN = 1
+a ^N Succ n = a *N (a ^N n)
 {-
 Induction principle
 a0 : P(Zero) is base case
