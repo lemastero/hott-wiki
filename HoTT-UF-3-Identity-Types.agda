@@ -32,10 +32,10 @@ cong f (refl _) = refl _
 +left-identity (succ n) = cong succ (+left-identity n)
 
 exerciseLeIffExistDifference1 : (x y : Nat) -> (x <= y) -> -Σ Nat \ d -> (x +N d) ≡ y
-exerciseLeIffExistDifference1 zero zero x<=y = zero , refl zero
-exerciseLeIffExistDifference1 zero (succ y) x<=y = (succ y) , cong succ (+left-identity y)
-exerciseLeIffExistDifference1 (succ x) (succ y) x<=y = {!   !}
+exerciseLeIffExistDifference1 x y x<=y = {!   !}
 
+exerciseLeIffExistDifference2 : (x y : Nat) -> (-Σ Nat \ d -> (x +N d) ≡ y) -> (x <= y)
+exerciseLeIffExistDifference2 x y sg = {!   !}
 
 -- pointwise equality of functions
 _∼_ : {X : Type UniverseU} {A : X → Type UniverseV } -> Π A -> Π A -> Type (UniverseU umax UniverseV)

@@ -40,8 +40,9 @@ syntax -Σ X (\ x -> y) = Σ x ꞉ X , y
 Σ-induction f (x , y) = f x y
 
 uncurry : {X : Type UniverseU} {Y : X -> Type UniverseV} {P : Σ Y -> Type UniverseW}
- -> ((x : X) (y : Y x) -> P (x , y))
- -> ((x , y) : Σ Y) -> P (x , y)
+ -> ((x : X) -> (y : Y x) -> P (x , y)) -- f: x -> y -> g (x y)
+ -> ((x , y) : Σ Y)                     -- (x, y)
+ -> P (x , y)
 uncurry f (x , y) = f x y
 
 -- inverse of Σ-induction
