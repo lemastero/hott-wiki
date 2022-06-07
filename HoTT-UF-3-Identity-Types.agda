@@ -8,21 +8,6 @@ open import HoTT-UF-2-Dependent-Types public
 type theory: identity type (identification, equality)
 homotopy theory:
 set theory:
-
-structure of identity type
-
-rules for equality
-
-A type    A ≡ B    A ≡ B   B ≡ C
-------   ------   ---------------
-A ≡ A     B ≡ A       A ≡ C
-
-this is not simple type (0,1,2,N) or type depending on parameter like +
-rarther it is type family
-for given type X we have function Id X : X -> X -> UniverseU
-for any fixed element x : X type
-Sigma y : Y, Id X x y is always a sigleton (has 1 element namely refl)
-
 -}
 
 data Id (X : Type UniverseU) : X -> X -> Type UniverseU where
@@ -32,6 +17,25 @@ data Id (X : Type UniverseU) : X -> X -> Type UniverseU where
 
 _≡_ : {X : Type UniverseU} ->  X -> X -> Type UniverseU
 x ≡ y = Id _ x y
+
+
+{- Exercise x <= y  <=>  Σ z : Nat , x + z == y
+----------------------------------------------- -}
+
+open Arithmetic public
+
+cong : {X Y : Set}(f : X -> Y){x y : X} -> (x ≡ y) -> f x ≡ f y
+cong f (refl _) = refl _
+
++left-identity : forall (n : Nat) -> (0 +N n) ≡ n
++left-identity zero = refl 0
++left-identity (succ n) = cong succ (+left-identity n)
+
+exerciseLeIffExistDifference1 : (x y : Nat) -> (x <= y) -> -Σ Nat \ d -> (x +N d) ≡ y
+exerciseLeIffExistDifference1 zero zero x<=y = zero , refl zero
+exerciseLeIffExistDifference1 zero (succ y) x<=y = (succ y) , cong succ (+left-identity y)
+exerciseLeIffExistDifference1 (succ x) (succ y) x<=y = {!   !}
+
 
 -- pointwise equality of functions
 _∼_ : {X : Type UniverseU} {A : X → Type UniverseV } -> Π A -> Π A -> Type (UniverseU umax UniverseV)
@@ -155,9 +159,7 @@ has-decidable-equality X = (x y : X) -> decidable (x ≡ y)
 -- video 2 Identity types 1:01:59
 -- conor video 4 beginning https://www.youtube.com/watch?v=OZeDRtRmgkw
 
--- -2-groupoids
--- Contractible types
--- other names: singleton type
+-- -2-groupoids / contractible types / singleton type
 -- type is contractible if there is designated c : X
 -- that is identified with each x : X
 is-singleton : Type UniverseU -> Type UniverseU
@@ -167,7 +169,6 @@ is--2-groupoid : Type UniverseU -> Type UniverseU
 is--2-groupoid = is-singleton
 
 -- element c : X is center of contraction
-
 is-center : (X : Type UniverseU) -> X -> Type UniverseU
 is-center X c = (x : X) -> c ≡ x
 
@@ -175,8 +176,7 @@ is-center X c = (x : X) -> c ≡ x
 Unit-is-contractible : is-singleton One
 Unit-is-contractible = <> , One-induction (\x -> <> ≡ x) (refl <>)
 
--- -1-groupoids
--- subsingletons (propositions, truth values)
+-- -1-groupoids / subsingletons (propositions, truth values)
 -- type is subsingleton if it has at most 1 element (any 2 of its elements are equal or identified)
 -- PI(x y : A) x ≡A y
 -- in topology type there is continous selection of map between x and y or is empty

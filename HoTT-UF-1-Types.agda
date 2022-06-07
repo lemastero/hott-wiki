@@ -13,14 +13,17 @@ Zero-induction : (P : Zero -> Type UniverseU)
  -> (x : Zero) -> P x     -- property P holds for all elements of type Zero
 Zero-induction A ()
 
--- type is empty when we have a function to the empty type
-not : Type UniverseU -> Type UniverseU
-not X = X -> Zero
-
 Zero-recursion : (A : Type UniverseU) -> Zero -> A
 Zero-recursion A a = Zero-induction (\ _ -> A) a
 
-absurd         : (A : Type UniverseU) -> Zero -> A
+not : Type UniverseU -> Type UniverseU
+not X = X -> Zero
+
+-- type is empty == there is function to the empty type
+is-empty : Type UniverseU -> Type UniverseU
+is-empty = not
+
+absurd : (A : Type UniverseU) -> Zero -> A
 absurd = Zero-recursion
 
 -- unit type / termina object
@@ -35,12 +38,15 @@ One-induction : (P : One -> Type UniverseU)
   -> (x : One) -> P x   -- property P holds for every element of One
 One-induction P a <> = a
 
+-- logic: P => (True -> P)
+-- const[P](P)   : Unit => P
 One-recursion : (P : Type UniverseU) ->
   P ->
   (One -> P)
 One-recursion P a x = One-induction (\ _ -> P) a x
 
 -- unique function from any type to One
+-- logic: A => True
 unit : {A : Type UniverseU} -> A -> One
 unit x = <>
 
@@ -52,12 +58,20 @@ data _+_ (X : Type UniverseU) (Y : Type UniverseV) : Type (UniverseU umax Univer
 infixr 20 _+_
 
 +-induction : {X : Type UniverseU} {Y : Type UniverseV} (P : X + Y -> Type UniverseW)
- -> ((x : X) -> P (Left  x))   -- base case Left
- -> ((y : Y) -> P (Right y))   -- base case Right
+ -> ((x : X) -> P (Left  x))   -- base case Left (bracket for easier pattern matching)
+ -> ((y : Y) -> P (Right y))   -- base case Right (bracket for easier pattern matching)
                                -- no inductive case
  -> (z : X + Y) -> P z         -- property P holds for all elements of X + Y
 +-induction P f _ (Left x) = f x
 +-induction P _ g (Right y) = g y
+
++-recursion : {X : Type UniverseU} {Y : Type UniverseV} (P : Type UniverseW)
+ -> (X -> P)
+ -> (Y -> P)
+ -> (X + Y) -> P
++-recursion P xp yp xy = +-induction
+     (\ XY -> P) -- in +-induction P is dependent type so fake it
+     xp yp xy    -- could skip those
 
 +0-right-id : {A : Type UniverseU} -> A + Zero -> A
 +0-right-id (Left a) = a
@@ -123,12 +137,39 @@ Bool-recursion : (A : Type UniverseU)
  -> A
  -> (Bool -> A -> A)
  -> Bool -> A
--- Bool-recursion A a f b = f b a -- TODO why not this
-Bool-recursion A a f b = a
+Bool-recursion A a f b = f b a
+-- Bool-recursion A a f b = a
 
 -- type Bool formulated using binary sum and One type
 2T : Type Universe0
 2T = One + One
+
+pattern Zero' = Left <>
+pattern One' = Right <>
+
+2T-induction : (P : 2T -> Type UniverseU)
+ -> P Zero'
+ -> P One'
+ -> (n : 2T) -> P n
+2T-induction P p0 p1 Zero' = p0
+2T-induction P p0 p1 One' = p1
+
+2T-induction' : (P : 2T -> Type UniverseU)
+ -> P Zero'
+ -> P One'
+ -> (n : 2T) -> P n
+2T-induction' P p0 p1 = +-induction
+  P
+  (One-induction (\ x -> P (Left x))  p0 )
+  (One-induction (\ y -> P (Right y)) p1 )
+
+2T-recursion : (P : Type UniverseU)
+ -> P
+ -> (2T -> P -> P)
+ -> 2T -> P
+2T-recursion P p f t2 = 2T-induction (\ 2t -> P) p (f t2 p) t2
+
+-- TODO proove something about 2T-recurion is equiv to Bool-recursion ?
 
 -- 3 element type
 data Three : Type Universe0 where
@@ -140,55 +181,82 @@ data Three : Type Universe0 where
 
 --type of natural numbers
 data Nat : Type Universe0 where
-  ZeroN : Nat
-  Succ : Nat -> Nat
+  zero : Nat
+  succ : Nat -> Nat
 
 {-# BUILTIN NATURAL Nat #-}
 
--- TODO pattern match on second for consistency with power
-_+N_ : Nat -> Nat -> Nat
-n +N 0 = n
-n +N Succ m = Succ (n +N m)
-
--- TODO pattern match on second arg for consistency with power
-_*N_ : Nat -> Nat -> Nat
-0 *N n = 0
-Succ a *N n = n +N (a *N n)
-
-_^N_ : Nat -> Nat -> Nat
-a ^N ZeroN = 1
-a ^N Succ n = a *N (a ^N n)
-
 --Induction principle == Nat elimination rule
-Nat-induction : (P : Nat -> Type UniverseU)
- -> P ZeroN                           -- base case
- -> ((n : Nat) -> P n -> P (Succ n))  -- inductive case
+Nat-induction' : (P : Nat -> Type UniverseU)
+ -> P 0                               -- base case
+ -> ((n : Nat) -> P n -> P (succ n))  -- inductive case
  -> (n : Nat) -> P n                  -- property P holds for all element of N
-Nat-induction P s t = h
+Nat-induction' P s t = h     -- TODO Q is this something special?
   where
      h : (k : Nat) -> P k
      h 0        = s
-     h (Succ n) = t n (h n)
+     h (succ n) = t n (h n)
 
-Nat-induction-2 : (P : Nat -> Type UniverseU)
- -> P ZeroN                           -- base case
- -> ((n : Nat) -> P n -> P (Succ n))  -- inductive case
+Nat-induction : (P : Nat -> Type UniverseU)
+ -> P 0                               -- base case
+ -> ((n : Nat) -> P n -> P (succ n))  -- inductive case
  -> (n : Nat) -> P n                  -- property P holds for all element of N
-Nat-induction-2 P P0 t 0 = P0
-Nat-induction-2 P P0 t (Succ n) = t n (Nat-induction-2 P P0 t n) -- TODO is this correct ?
+--Nat-induction P P0 f 0 = P0
+Nat-induction P p0 fnp 0 = p0
+Nat-induction P p0 fnp (succ n) = fnp n (Nat-induction P p0 fnp n)
 
 --Recurson principle
-Nat-recursion : (A : Type UniverseU)
- -> A
- -> (Nat -> A -> A)
- -> Nat -> A
-Nat-recursion X = Nat-induction (\ _ -> X) -- TODO implement differently
+Nat-recursion : (P : Type UniverseU)
+ -> P
+ -> (Nat -> P -> P)
+ -> Nat -> P
+Nat-recursion P p0 fnp n = Nat-induction
+  (\ m -> P) -- fake dependent type P that Nat-induction want
+  p0 fnp n
 
-Nat-iteration : (A : Type UniverseU)
- -> A
- -> (A -> A)
- -> Nat -> A
-Nat-iteration A x f = Nat-recursion A x (\ _ x -> f x) -- TODO implement differently
+Nat-iteration : (P : Type UniverseU)
+ -> P
+ -> (P -> P)
+ -> Nat -> P
+Nat-iteration P p0 f n = Nat-recursion P p0 (\ _n p -> f p) n
+
+module Arithmetic where
+  _+N_ : Nat -> Nat -> Nat
+  x +N 0 = x
+  x +N succ y = succ (x +N y)
+
+  _*N_ : Nat -> Nat -> Nat
+  x *N 0 = 0
+  x *N succ y = x +N (x *N y)
+
+  _^N_ : Nat -> Nat -> Nat
+  x ^N 0 = 1
+  x ^N succ y = x *N (x ^N y)
+
+module Arithmetic' where
+  _+N_ : Nat -> Nat -> Nat
+  x +N y = h x y
+    where
+      h : Nat -> Nat -> Nat
+      h x y = Nat-iteration Nat x succ y
+
+  _*N_ : Nat -> Nat -> Nat
+  x *N y = h x y
+     where
+       h : Nat -> Nat -> Nat
+       h x y = Nat-iteration Nat 0 (\z -> x +N z) y
+
+  {-
+  _^N_ : Nat -> Nat -> Nat
+  x ^N y = h x y
+    where
+      h : Nat -> Nat -> Nat
+      h x y = {!   !} -- TODO
+  -}
+_<=_ : Nat -> Nat -> Set
+zero <= z = One
+succ x <= zero = Zero
+succ x <= succ y = x <= y
 
 data Fibonacci : Type Universe0 where
   fib0 : Fibonacci
@@ -275,8 +343,8 @@ data Can (X : Type UniverseU)(Y : Type UniverseV) : Type (UniverseU umax Univers
 
 -- Fin n type of numbers 0 ... n-1
 data Fin : Nat -> Set where  -- TODO use UniverseU
-  fzero : {n : Nat} -> Fin (Succ n)          -- 0 belongs to every Fin n
-  fsucc : {n : Nat} -> Fin n -> Fin (Succ n) -- for all natural numbers n they are part of Fin (n+1)
+  fzero : {n : Nat} -> Fin (succ n)          -- 0 belongs to every Fin n
+  fsucc : {n : Nat} -> Fin n -> Fin (succ n) -- for all natural numbers n they are part of Fin (n+1)
 
 -- TODO Fin induction
 -- TODO Fin recursion
