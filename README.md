@@ -6,7 +6,7 @@ TT in Agda
 * [PLFA](https://plfa.github.io/) - Philip Wadler, Wen Kokke
 
 Agda, Category Theory, TT
-* CS410 Advanced Functional Programming at the University of Strathclyde - Conor McBride ([videos](https://www.youtube.com/playlist?list=PLqggUNm8QSqmeTg5n37oxBif-PInUfTJ2)) ([GH repo with code](https://github.com/pigworker/CS410-17))
+* CS410 Advanced Functional Programming at the University of Strathclyde - Conor McBride ([videos](https://www.youtube.com/playlist?list=PLqggUNm8QSqmeTg5n37oxBif-PInUfTJ2)), ([GH repo with code](https://github.com/pigworker/CS410-17)), ([lecture notes](https://github.com/pigworker/CS410-15/blob/master/CS410-notes.pdf)), ([GH 2018](https://github.com/pigworker/CS410-18))
 
 HoTT resources:
 * Introduction to Univalent Foundations of Mathematics with Agda - Martín Hötzel Escardó ([GH](https://github.com/martinescardo/HoTT-UF-Agda-Lecture-Notes)) ([www](https://www.cs.bham.ac.uk/~mhe/HoTT-UF-in-Agda-Lecture-Notes/HoTT-UF-Agda.html))
