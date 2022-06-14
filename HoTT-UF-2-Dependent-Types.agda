@@ -18,6 +18,8 @@ record Σ {X : Type UniverseU} (Y : X -> Type UniverseV) : Type (UniverseU umax 
     x : X
     y : Y x
 
+infixr 50 _,_
+
 fst : {X : Type UniverseU} {Y : X -> Type UniverseV} -> Σ Y -> X
 fst (x , y) = x
 
@@ -55,6 +57,8 @@ curry f x y = f (x , y)
 _×_ : Type UniverseU -> Type UniverseV -> Type (UniverseU umax UniverseV)
 X × Y = Σ x ꞉ X , Y
 
+infixr 30 _×_
+
 {-
 type theory: dependent product type Pi(x: X),A(x)
 logic: universal quantifier
@@ -77,5 +81,14 @@ _compose_ : {X : Type UniverseU} {Y : Type UniverseV} {Z : Y -> Type UniverseW}
   -> (x : X) -> Z (f x)
 g compose f = \x -> g (f x)
 
-infixr 50 _,_
-infixr 30 _×_
+-- TODO can I compose two dependent types and have "forgetfull" transformation: forall x. x y -> y
+-- TODO can I compose two dependent types and have ... TODO
+
+domain : {X : Type UniverseU} {Y : Type UniverseV} -> (X -> Y) -> Type UniverseU
+domain {U} {V} {X} {Y} f = X
+
+codomain : {X : Type UniverseU} {Y : Type UniverseV} -> (X -> Y) -> (Type UniverseV)
+codomain {U} {V} {X} {Y} f = Y
+
+type-of : {X : Type UniverseU} -> X -> (Type UniverseU)
+type-of {U} {X} x = X
