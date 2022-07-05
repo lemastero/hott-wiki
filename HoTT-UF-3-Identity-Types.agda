@@ -26,10 +26,11 @@ x ≡ y = Id _ x y
 J : (X : Type UniverseU)
     ( A : ((x y : X)  -> x ≡ y -> Type UniverseV) ) -- A is property of Id
  -> ((x : X) -> A x x (refl x))                     -- show that property holds for refl
+                                     -- no iductive case
  -> (x y : X) (p : x ≡ y) -> A x y p                -- then it holds for evry member of Id x y
 J X A f x x (refl x) = f x
--- J X A f x y (refl x) = ?   TODO do it
 
+-- H principle TODO what is purpose of it?
 H : {X : Type UniverseU}
     (x : X)                                        -- forall x
     ( B : ((y : X)   -> x ≡ y -> Type UniverseV))  -- B is property of Id
@@ -48,12 +49,14 @@ Js-alignment : (X : Type UniverseU) (A : (x y : X) -> x ≡ y -> Type UniverseV)
                (f : (x : X) -> A x x (refl x)) (x y : X) (p : x ≡ y)
             -> J X A f x y p ≡ J-using-H X A f x y p
 Js-alignment X A f x x (refl x) = refl (f x)
--- Js-alignment X A f x y x=y = {!   !} -- TODO do it
 
--- transport along Id (cong)
+
+-- Identity type is congruence relation
+-- Conor McBride =$=
+-- PLFA transport along Id (cong)
 transport : { X : Type UniverseU }
-   (A : X -> Type UniverseV) -- B is property
-   {x y : X}                    -- forall s,t
+   (A : X -> Type UniverseV)   -- B is property
+   {x y : X}                   -- forall s,t
    -> x ≡ y                    -- if they are equal
    -> A x                      -- B holds for s
    -> A y                      -- then B holds for t
@@ -65,6 +68,8 @@ transport-using-J : {X : Type UniverseU} (A : X -> Type UniverseV) {x y : X}
  -> A y
 transport-using-J {UniverseU} {UniverseV} {X} A {x} {y} =
   J X (\x y _ -> A x -> A y) (\x -> id (A x)) x y
+
+-- TODO non dependent J ???
 
 -- ≡-recursion is non dependent version of ≡-induction (J)
 nondep-H : {X : Type UniverseU} (x : X) (A : X -> Type UniverseV)
@@ -90,19 +95,18 @@ transports-agreement2 : {X : Type UniverseU} (A : X -> Type UniverseV) {x y : X}
   -> (transport-using-J A p ≡ transport A p)
 transports-agreement2 A (refl x) = refl (transport A (refl x))
 
--- composition of identity types
 lhs : { X : Type UniverseU} {x y : X} -> x ≡ y -> X
 lhs {U} {X} {x} {y} p = x
 
 rhs : { X : Type UniverseU} {x y : X} -> x ≡ y -> X
 rhs {U} {X} {x} {y} p = y
 
+-- composition of identity types
 _≡-compose_ : {X : Type UniverseU} {x y z : X} -> x ≡ y -> y ≡ z -> x ≡ z
-x=y ≡-compose y=z = transport (lhs x=y ≡_) y=z x=y
+x=y ≡-compose y=z = transport (lhs x=y ≡_) y=z x=y -- TODO how this work ?
 
--- TODO Exeercise different definition
 _≡-compose''_ : {X : Type UniverseU} {x y z : X} -> x ≡ y -> y ≡ z -> x ≡ z
-_≡-compose''_ {x} {y} {z} x=y y=z = {!   !}
+_≡-compose''_ {x} {y} {z} (refl .z) (refl z) = refl z
 
 -- Utilities for writing proofs
 
@@ -119,12 +123,12 @@ infixr 2 _=[_>=_
 infix 3 _[QED]
 
 -- ≡ commutativity
-Id-inverse : {X : Type UniverseU} {x y : X} -> x ≡ y -> y ≡ x
-Id-inverse p = transport (_≡ lhs p) p (refl (lhs p) )
+≡-swap : {X : Type UniverseU} {x y : X} -> x ≡ y -> y ≡ x
+≡-swap p = transport (_≡ lhs p) p (refl (lhs p) )
 
 -- Id-compose using transport
 _≡-compose'_ : {X : Type UniverseU} {x y z : X} -> x ≡ y -> y ≡ z -> x ≡ z
-x=y ≡-compose' y=z = transport ( _≡ rhs y=z ) (Id-inverse x=y) y=z
+x=y ≡-compose' y=z = transport ( _≡ rhs y=z ) (≡-swap x=y) y=z
 
 compose-agreement : {X : Type UniverseU} {x y z : X} (p : x ≡ y) (q : y ≡ z)
                   -> p ≡-compose'' q ≡ p ≡-compose q
@@ -148,9 +152,11 @@ compose-agreement (refl _) (refl _) = refl (refl _)
                    -> (refl x) ≡-compose p ≡ p
 ≡-compose-left-nel (refl _) = refl _
 
+{-
 ≡-compose'-right-nel : {X : Type UniverseU} {x y : X} (p : x ≡ y)
       -> p ≡-compose' (refl y) ≡ p
 ≡-compose'-right-nel x=y = {!   !}  -- TODO WIP
+-}
 
 -- cong
 ap : {X : Type UniverseU} {Y : Type UniverseV} (f : X -> Y) {x y : X} -> (x ≡ y) -> f x ≡ f y
@@ -164,48 +170,6 @@ ap' f (refl _) = refl _
 _∼_ : {X : Type UniverseU} {A : X → Type UniverseV } -> Π A -> Π A -> Type (UniverseU umax UniverseV)
 f ∼ g = ∀ x -> f x ≡ g x
 
-
-{- Exercise x <= y  <=>  Σ z : Nat , x + z == y
------------------------------------------------ -}
-
-open Arithmetic public
-
-cong : {X Y : Set}(f : X -> Y){x y : X} -> (x ≡ y) -> f x ≡ f y
-cong f (refl _) = refl _
-
-+left-identity : forall (n : Nat) -> (0 +N n) ≡ n
-+left-identity zero = refl 0
-+left-identity (succ n) = cong succ (+left-identity n)
-
-exerciseLeIffExistDifference1 : (x y : Nat) -> (x <= y) -> -Σ Nat \ d -> (x +N d) ≡ y
-exerciseLeIffExistDifference1 x y x<=y = {!   !} -- TODO WIP
-
-exerciseLeIffExistDifference2 : (x y : Nat) -> (-Σ Nat \ d -> (x +N d) ≡ y) -> (x <= y)
-exerciseLeIffExistDifference2 x y sg = {!   !} -- TODO WIP
-
--- TODO WIP review exercise MGS 2022
--- ap : {X : Type UniverseU} {Y : Type UniverseV} {x1 x2 : X} -> (f : X -> Y) -> (x1 ≡ x2) -> (f x1) ≡ (f x2)
--- ap = {!   !}
-
--- ex1 : {X : Type UniverseU} {x1 x2 : X} -> ap (id X) ~ id (x1 ≡ x2)
--- ex1 = ?
-
--- ex2 : {X : Type UniverseU {Y : UniverseV} {Z : UniverseW} (f : X -> Y) (g : Y -> Z) {x x1 ; X} (p : x ≡ x1)
---  -> ap (g . f) p ≡ (ap g . ap f) p
--- ex2 {U V W X Y Z} f g {x} {.x} (refl .x) = refl (refl (g (f x)))
-
--- with explicit arguemts
--- app : {X : Type UniverseU} {Y : Type UniverseV} {x1 x2 : X} -> (f : X -> Y) -> (x1 ≡ x2) -> (f x1) ≡ (f x2)
--- app = {!   !}
-
--- is-singl : Type UniverseU -> Type UniverseU
--- is-singl X = Σ x : X , ((y : X) -> x ≡ y)
-
--- singl : {X : Type UniverseU} -> X -> Type UniverseU
--- singl {U} {X} x = Σ b: A , a ≡ b
-
--- ex3 : {X : Type Universe U} (x : X) -> is-singl ( singl x )
--- ex3 x = (x , (refl x)), ?
 
 infix   0 Id
 infix   0 _≡_

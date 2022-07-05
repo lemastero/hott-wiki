@@ -73,6 +73,9 @@ homotopy theory: space of sections
 id : (X : Type UniverseU) -> X -> X
 id X x = x
 
+id' : {X : Type UniverseU} -> X -> X
+id' x = x
+
 -- dependent function composition (Y -> Z) -> (X -> Y) -> (X -> Z)
 -- if Z y holds for all y: Y then for any given f: X -> Y we have that Z (f x) holds for all x: X
 _compose_ : {X : Type UniverseU} {Y : Type UniverseV} {Z : Y -> Type UniverseW}

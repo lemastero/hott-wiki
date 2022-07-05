@@ -139,7 +139,7 @@ Bool-recursion : (A : Type UniverseU)
 Bool-recursion A a f b = f b a
 -- Bool-recursion A a f b = a
 
--- type Bool formulated using binary sum and One type
+-- two point type (Bool) defined using binary sum and One type
 2T : Type Universe0
 2T = One + One
 
