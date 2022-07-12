@@ -45,7 +45,7 @@ We cannot allow to have rule Γ ⊢ U : U because this leads to paradoxes: [[htt
 ** product type
 pair, tuple
 
-*** formation rule
+- formation rule
 
 #+BEGIN_SRC
 A type  A type
@@ -53,7 +53,7 @@ A type  A type
 A * B type
 #+END_SRC
 
-*** introduction rule
+- introduction rule
 
 #+BEGIN_SRC
 m: A  n: B
@@ -61,7 +61,7 @@ m: A  n: B
 (m,n): A*B
 #+END_SRC
 
-*** elimination rules
+- elimination rules
 
 #+BEGIN_SRC
 ab: A * B
@@ -75,7 +75,7 @@ ab: A * B
 snd(ab): B
 #+END_SRC
 
-*** computation rules (introduce and then eliminate)
+- computation rules (introduce and then eliminate)
 
 #+BEGIN_SRC
 m: A  n: B
@@ -89,7 +89,7 @@ m: A  n: B
 snd((m,n)) == n
 #+END_SRC
 
-*** uniqueness rules (eliminate and introduce we get the same):
+- uniqueness rules (eliminate and introduce we get the same):
 
 #+BEGIN_SRC
 ab: A * B
@@ -97,7 +97,7 @@ ab: A * B
 ab == (fst(ab),snd(ab)): A * B
 #+END_SRC
 
-*** Agda code
+- Agda code
 
 #+BEGIN_SRC Agda
 record _*_ (S : Type UnivU)(T : Type UnivV) : Type (UnivU umax UnivV)  where
@@ -110,7 +110,7 @@ record _*_ (S : Type UnivU)(T : Type UnivV) : Type (UnivU umax UnivV)  where
 ** sum type
 Either, disjoint sum
 
-*** formation rules
+- formation rules
 
 #+BEGIN_SRC
 A type   B type
@@ -118,7 +118,7 @@ A type   B type
 A + B type
 #+END_SRC
 
-*** introduction rules
+- introduction rules
 
 #+BEGIN_SRC
 m: A
@@ -130,7 +130,7 @@ n: B
 right(n): A + B
 #+END_SRC
 
-*** elimination rule
+- elimination rule
 
 #+BEGIN_SRC
 x: A ⊢ m: C   y:B ⊢ n: C   o: A+B
@@ -138,7 +138,7 @@ x: A ⊢ m: C   y:B ⊢ n: C   o: A+B
 case(x.m;y.n;o): C
 #+END_SRC
 
-*** computation rules
+- computation rules
 
 #+BEGIN_SRC
 x: A ⊢ m: C   y:B ⊢ n: C   o: A
@@ -152,7 +152,7 @@ x: A ⊢ m: C   y:B ⊢ n: C   o: B
 case(x.m;y.n;right(o)) == n[o/x] : C
 #+END_SRC
 
-*** Agda code
+- Agda code
 
 #+BEGIN_SRC Agda
 data _+_ (X : Type UnivU) (Y : Type UnivV) : Type (UnivU umax UnivV) where
@@ -176,7 +176,7 @@ data _+_ (X : Type UnivU) (Y : Type UnivV) : Type (UnivU umax UnivV) where
 ** unit type
 1, top
 
-*** formation rule
+- formation rule
 
 #+BEGIN_SRC
 
@@ -184,7 +184,7 @@ data _+_ (X : Type UnivU) (Y : Type UnivV) : Type (UnivU umax UnivV) where
 One type
 #+END_SRC
 
-*** introduction rule
+- introduction rule
 
 #+BEGIN_SRC
 
@@ -192,11 +192,11 @@ One type
 <> : One
 #+END_SRC
 
-*** no elimination rules
+- no elimination rules
 
-*** no computation rules
+- no computation rules
 
-*** uniqueness rule
+- uniqueness rule
 
 #+BEGIN_SRC
 
@@ -205,7 +205,7 @@ m: One
 m == <> : One
 #+END_SRC
 
-*** Agda code:
+- Agda code:
 
 #+BEGIN_SRC Agda
 data One : Type Univ0 where
@@ -230,7 +230,7 @@ unit x = <>
 ** empty type
 bottom, void, 0
 
-*** formation
+- formation
 
 #+BEGIN_SRC
 
@@ -238,13 +238,9 @@ bottom, void, 0
 Zero type
 #+END_SRC
 
-*** no introduction rules
+- no introduction rules
 
-#+BEGIN_SRC Agda
-data Zero : Type Univ0 where
-#+END_SRC
-
-*** elimination rule
+- elimination rule
 
 #+BEGIN_SRC
 m: Zero
@@ -252,9 +248,9 @@ m: Zero
 absurd(m) : C
 #+END_SRC
 
-*** no computation rules
+- no computation rules
 
-*** Agda code
+- Agda code
 
 #+BEGIN_SRC Agda
 data Zero : Type Univ0 where
@@ -271,8 +267,6 @@ absurd = Zero-recursion
 
 ** function type
 
-formation
-
 * Dependent Types
 
 ** dependent sum
@@ -281,7 +275,7 @@ formation
 
 ** identity type
 
-*** formation rule
+- formation rule
 
 #+BEGIN_SRC
 A type   m: A   n: A
@@ -289,7 +283,7 @@ A type   m: A   n: A
 Id(A)(m,n) type
 #+END_SRC
 
-*** introduction rule
+- introduction rule
 
 #+BEGIN_SRC
 m: A
@@ -297,7 +291,7 @@ m: A
 refl(m): Id(A)(m,m)
 #+END_SRC
 
-*** elimination rule
+- elimination rule
 #+BEGIN_SRC
 A type   n:A   o:A   p:Id(A)(n;o)
 x:A,y:A,q:Id(x;y) ⊢ C type
@@ -306,7 +300,7 @@ z: A ⊢ m : C[x -> z, y -> z, q -> refl(z)]
 J[X.y.q.C](z.M;p): C[x -> n, y -> o, q -> p]
 #+END_SRC
 
-*** computation rule
+- computation rule
 
 #+BEGIN_SRC
 A type n:A o:A
