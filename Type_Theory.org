@@ -1,26 +1,26 @@
+* Homotopy Type Theory
+
+- [[/Type_Theory.org#inference-rules][inference rules]]
+- [[/Type_Theory.org#universes][universes]]
+- [[/Type_Theory.org#basic-types][basic types]]
+ - [[/Type_Theory.org#empty-type][empty type]]
+ - [[/Type_Theory.org#unit-type][unit type]]
+ - [[/Type_Theory.org#natural-numbers][natural numbers]]
+ - [[/Type_Theory.org#product-type][product type]]
+ - [[/Type_Theory.org#sum-type][sum type]]
+ - [[/Type_Theory.org#function-type][function type]]
+- [[/Type_Theory.org#dependent-types][dependent types]]
+ - [[/Type_Theory.org#dependent-sum][dependent sum]]
+ - [[/Type_Theory.org#dependent-product][dependent product]]
+ - [[/Type_Theory.org#identity-type][identity type]]
+
 ** inference rules
 formation rules - how to build type (declare type)
 introduction rules - how to create elements
-elimination rules - how to use elements
-computation rules - what will happen when we introduce and then eliminate
+elimination rules - how to use elements (to build dependent function)
+computation rules - what will happen when we introduce and then eliminate (how to apply dependent function)
 uniqueness rules - if we eliminate and introduce we should get the same result
 
-** free variables
-TODO
-
-** substitution
-TODO
-
-approaches to avoid variable capture
-- [[https://en.wikipedia.org/wiki/De_Bruijn_index][de Bruijn index]]
-- nominal techniques
-- ...
-
-** renaming
-TODO
-
-** structural rules
-TODO
 
 ** universes
 
@@ -42,7 +42,8 @@ We cannot allow to have rule Γ ⊢ U : U because this leads to paradoxes: [[htt
 
 * basic types
 
-** product type (pair, tuple)
+** product type
+pair, tuple
 
 *** formation rule
 
@@ -97,7 +98,8 @@ ab == (fst(ab),snd(ab)): A * B
 #+END_SRC
 
 
-** (disjoint) sum type (either)
+** sum type
+Either, disjoint sum
 
 *** formation rules
 
@@ -141,7 +143,8 @@ x: A ⊢ m: C   y:B ⊢ n: C   o: B
 case(x.m;y.n;right(o)) == n[o/x] : C
 #+END_SRC
 
-** unit type (top)
+** unit type
+1, top
 
 *** formation rule
 
@@ -172,7 +175,8 @@ m: One
 m == <> : One
 #+END_SRC
 
-** empty type (bottom, void)
+** empty type
+bottom, void, 0
 
 *** formation
 
@@ -204,7 +208,7 @@ formation
 
 ** dependent product
 
-** identification
+** identity type
 
 *** formation rule
 
