@@ -97,6 +97,15 @@ ab: A * B
 ab == (fst(ab),snd(ab)): A * B
 #+END_SRC
 
+*** Agda code
+
+#+BEGIN_SRC Agda
+record _*_ (S : Type UnivU)(T : Type UnivV) : Type (UnivU umax UnivV)  where
+  constructor _,_
+  field
+    fst : S
+    snd : T
+#+END_SRC
 
 ** sum type
 Either, disjoint sum
@@ -143,6 +152,27 @@ x: A ⊢ m: C   y:B ⊢ n: C   o: B
 case(x.m;y.n;right(o)) == n[o/x] : C
 #+END_SRC
 
+*** Agda code
+
+#+BEGIN_SRC Agda
+data _+_ (X : Type UnivU) (Y : Type UnivV) : Type (UnivU umax UnivV) where
+ Left : X -> X + Y
+ Right : Y -> X + Y
+
++-induction : {X : Type UnivU} {Y : Type UnivV} (P : X + Y -> Type UnivW)
+ -> ((x : X) -> P (Left  x))
+ -> ((y : Y) -> P (Right y))
+ -> (z : X + Y) -> P z
++-induction P f _ (Left x) = f x
++-induction P _ g (Right y) = g y
+
++-recursion : {X : Type UnivU} {Y : Type UnivV} (P : Type UnivW)
+ -> (X -> P)
+ -> (Y -> P)
+ -> (X + Y) -> P
++-recursion P xp yp xy = +-induction (\ XY -> P) xp yp xy
+#+END_SRC
+
 ** unit type
 1, top
 
@@ -175,6 +205,28 @@ m: One
 m == <> : One
 #+END_SRC
 
+*** Agda code:
+
+#+BEGIN_SRC Agda
+data One : Type Univ0 where
+  <> : One
+
+One-induction : (P : One -> Type UnivU)
+  -> P <>
+  -> (x : One) -> P x
+One-induction P a <> = a
+
+-- logic: P => (True -> P)
+One-recursion : (P : Type UnivU) ->
+  P ->
+  (One -> P)
+One-recursion P a x = One-induction (\ _ -> P) a x
+
+-- unique function from any type to One (logic: A => True)
+unit : {A : Type UnivU} -> A -> One
+unit x = <>
+#+END_SRC
+
 ** empty type
 bottom, void, 0
 
@@ -188,6 +240,10 @@ Zero type
 
 *** no introduction rules
 
+#+BEGIN_SRC Agda
+data Zero : Type Univ0 where
+#+END_SRC
+
 *** elimination rule
 
 #+BEGIN_SRC
@@ -197,6 +253,21 @@ absurd(m) : C
 #+END_SRC
 
 *** no computation rules
+
+*** Agda code
+
+#+BEGIN_SRC Agda
+data Zero : Type Univ0 where
+
+Zero-induction : (P : Zero -> Type UnivU) -> (x : Zero) -> P x
+Zero-induction A ()
+
+Zero-recursion : (A : Type UnivU) -> Zero -> A
+Zero-recursion A a = Zero-induction (\ _ -> A) a
+
+absurd : (A : Type UnivU) -> Zero -> A
+absurd = Zero-recursion
+#+END_SRC
 
 ** function type
 
