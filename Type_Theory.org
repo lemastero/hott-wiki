@@ -1,26 +1,26 @@
+* Homotopy Type Theory
+
+- [[/Type_Theory.org#inference-rules][inference rules]]
+- [[/Type_Theory.org#universes][universes]]
+- [[/Type_Theory.org#basic-types][basic types]]
+ - [[/Type_Theory.org#empty-type][empty type]]
+ - [[/Type_Theory.org#unit-type][unit type]]
+ - [[/Type_Theory.org#natural-numbers][natural numbers]]
+ - [[/Type_Theory.org#product-type][product type]]
+ - [[/Type_Theory.org#sum-type][sum type]]
+ - [[/Type_Theory.org#function-type][function type]]
+- [[/Type_Theory.org#dependent-types][dependent types]]
+ - [[/Type_Theory.org#dependent-sum][dependent sum]]
+ - [[/Type_Theory.org#dependent-product][dependent product]]
+ - [[/Type_Theory.org#identity-type][identity type]]
+
 ** inference rules
-formation rules - how to build type (declare type)
-introduction rules - how to create elements
-elimination rules - how to use elements
-computation rules - what will happen when we introduce and then eliminate
-uniqueness rules - if we eliminate and introduce we should get the same result
+- formation rules - how to build type (declare type)  
+- introduction rules (constructors) - how to create elements  
+- elimination rules (induction principle) - how to use elements (to build dependent function)  
+- computation rules - what will happen when we introduce and then eliminate (how to apply dependent function)  
+- uniqueness rules - if we eliminate and introduce we should get judgmentaly equal result
 
-** free variables
-TODO
-
-** substitution
-TODO
-
-approaches to avoid variable capture
-- [[https://en.wikipedia.org/wiki/De_Bruijn_index][de Bruijn index]]
-- nominal techniques
-- ...
-
-** renaming
-TODO
-
-** structural rules
-TODO
 
 ** universes
 
@@ -42,9 +42,10 @@ We cannot allow to have rule Γ ⊢ U : U because this leads to paradoxes: [[htt
 
 * basic types
 
-** product type (pair, tuple)
+** product type
+pair, tuple
 
-*** formation rule
+- formation rule
 
 #+BEGIN_SRC
 A type  A type
@@ -52,7 +53,7 @@ A type  A type
 A * B type
 #+END_SRC
 
-*** introduction rule
+- introduction rule
 
 #+BEGIN_SRC
 m: A  n: B
@@ -60,7 +61,7 @@ m: A  n: B
 (m,n): A*B
 #+END_SRC
 
-*** elimination rules
+- elimination rules
 
 #+BEGIN_SRC
 ab: A * B
@@ -74,7 +75,7 @@ ab: A * B
 snd(ab): B
 #+END_SRC
 
-*** computation rules (introduce and then eliminate)
+- computation rules (introduce and then eliminate)
 
 #+BEGIN_SRC
 m: A  n: B
@@ -88,7 +89,7 @@ m: A  n: B
 snd((m,n)) == n
 #+END_SRC
 
-*** uniqueness rules (eliminate and introduce we get the same):
+- uniqueness rules (eliminate and introduce we get the same):
 
 #+BEGIN_SRC
 ab: A * B
@@ -96,10 +97,20 @@ ab: A * B
 ab == (fst(ab),snd(ab)): A * B
 #+END_SRC
 
+- Agda code
 
-** (disjoint) sum type (either)
+#+BEGIN_SRC Agda
+record _*_ (S : Type UnivU)(T : Type UnivV) : Type (UnivU umax UnivV)  where
+  constructor _,_
+  field
+    fst : S
+    snd : T
+#+END_SRC
 
-*** formation rules
+** sum type
+Either, disjoint sum
+
+- formation rules
 
 #+BEGIN_SRC
 A type   B type
@@ -107,7 +118,7 @@ A type   B type
 A + B type
 #+END_SRC
 
-*** introduction rules
+- introduction rules
 
 #+BEGIN_SRC
 m: A
@@ -119,7 +130,7 @@ n: B
 right(n): A + B
 #+END_SRC
 
-*** elimination rule
+- elimination rule
 
 #+BEGIN_SRC
 x: A ⊢ m: C   y:B ⊢ n: C   o: A+B
@@ -127,7 +138,7 @@ x: A ⊢ m: C   y:B ⊢ n: C   o: A+B
 case(x.m;y.n;o): C
 #+END_SRC
 
-*** computation rules
+- computation rules
 
 #+BEGIN_SRC
 x: A ⊢ m: C   y:B ⊢ n: C   o: A
@@ -141,9 +152,31 @@ x: A ⊢ m: C   y:B ⊢ n: C   o: B
 case(x.m;y.n;right(o)) == n[o/x] : C
 #+END_SRC
 
-** unit type (top)
+- Agda code
 
-*** formation rule
+#+BEGIN_SRC Agda
+data _+_ (X : Type UnivU) (Y : Type UnivV) : Type (UnivU umax UnivV) where
+ Left : X -> X + Y
+ Right : Y -> X + Y
+
++-induction : {X : Type UnivU} {Y : Type UnivV} (P : X + Y -> Type UnivW)
+ -> ((x : X) -> P (Left  x))
+ -> ((y : Y) -> P (Right y))
+ -> (z : X + Y) -> P z
++-induction P f _ (Left x) = f x
++-induction P _ g (Right y) = g y
+
++-recursion : {X : Type UnivU} {Y : Type UnivV} (P : Type UnivW)
+ -> (X -> P)
+ -> (Y -> P)
+ -> (X + Y) -> P
++-recursion P xp yp xy = +-induction (\ XY -> P) xp yp xy
+#+END_SRC
+
+** unit type
+1, top
+
+- formation rule
 
 #+BEGIN_SRC
 
@@ -151,7 +184,7 @@ case(x.m;y.n;right(o)) == n[o/x] : C
 One type
 #+END_SRC
 
-*** introduction rule
+- introduction rule
 
 #+BEGIN_SRC
 
@@ -159,11 +192,11 @@ One type
 <> : One
 #+END_SRC
 
-*** no elimination rules
+- no elimination rules
 
-*** no computation rules
+- no computation rules
 
-*** uniqueness rule
+- uniqueness rule
 
 #+BEGIN_SRC
 
@@ -172,9 +205,32 @@ m: One
 m == <> : One
 #+END_SRC
 
-** empty type (bottom, void)
+- Agda code:
 
-*** formation
+#+BEGIN_SRC Agda
+data One : Type Univ0 where
+  <> : One
+
+One-induction : (P : One -> Type UnivU)
+  -> P <>
+  -> (x : One) -> P x
+One-induction P a <> = a
+
+-- logic: P => (True -> P)
+One-recursion : (P : Type UnivU) ->
+  P ->
+  (One -> P)
+One-recursion P a x = One-induction (\ _ -> P) a x
+
+-- unique function from any type to One (logic: A => True)
+unit : {A : Type UnivU} -> A -> One
+unit x = <>
+#+END_SRC
+
+** empty type
+bottom, void, 0
+
+- formation
 
 #+BEGIN_SRC
 
@@ -182,9 +238,9 @@ m == <> : One
 Zero type
 #+END_SRC
 
-*** no introduction rules
+- no introduction rules
 
-*** elimination rule
+- elimination rule
 
 #+BEGIN_SRC
 m: Zero
@@ -192,21 +248,74 @@ m: Zero
 absurd(m) : C
 #+END_SRC
 
-*** no computation rules
+- no computation rules
+
+- Agda code
+
+#+BEGIN_SRC Agda
+data Zero : Type Univ0 where
+
+Zero-induction : (P : Zero -> Type UnivU) -> (x : Zero) -> P x
+Zero-induction A ()
+
+Zero-recursion : (A : Type UnivU) -> Zero -> A
+Zero-recursion A a = Zero-induction (\ _ -> A) a
+
+absurd : (A : Type UnivU) -> Zero -> A
+absurd = Zero-recursion
+#+END_SRC
 
 ** function type
-
-formation
 
 * Dependent Types
 
 ** dependent sum
 
-** dependent product
+** dependent function
 
-** identification
+- formation rule
 
-*** formation rule
+#+BEGIN_SRC
+Γ ⊢ A : Univ(i)   Γ,x:A ⊢ B x : Univ(i)
+------------------------------------- Π-form
+Γ ⊢ Π x:A -> B x : Univ(i)  
+#+END_SRC
+
+- introduction rule
+
+#+BEGIN_SRC
+Γ, x:A ⊢ b:B x
+---------------------------------- Π-intro
+Γ ⊢ λ (x:A) -> b : Π (x:A) -> B x  
+#+END_SRC
+
+- elimination rule
+
+#+BEGIN_SRC
+Γ ⊢ f : Π (x:A) -> B x    Γ ⊢ a:A
+---------------------------------- Π-elim
+Γ ⊢ f(a) : B a
+#+END_SRC
+
+- computation rule
+
+#+BEGIN_SRC
+Γ, x:A ⊢ b:B x   Γ ⊢ a:A
+-------------------------------------- Π-comp-beta
+Γ ⊢ (λ (x:A) -> b)(a) == b[x:=a] : B a
+#+END_SRC
+
+- uniqueness rule
+
+#+BEGIN_SRC
+Γ ⊢ f : Π (x:A) -> B x
+---------------------------------------- Π-comp-eta
+Γ ⊢ f == (λ x -> f(x)) : Pi (x:A) -> B x
+#+END_SRC
+
+** identity type
+
+- formation rule
 
 #+BEGIN_SRC
 A type   m: A   n: A
@@ -214,7 +323,7 @@ A type   m: A   n: A
 Id(A)(m,n) type
 #+END_SRC
 
-*** introduction rule
+- introduction rule
 
 #+BEGIN_SRC
 m: A
@@ -222,7 +331,8 @@ m: A
 refl(m): Id(A)(m,m)
 #+END_SRC
 
-*** elimination rule
+- elimination rule
+
 #+BEGIN_SRC
 A type   n:A   o:A   p:Id(A)(n;o)
 x:A,y:A,q:Id(x;y) ⊢ C type
@@ -231,7 +341,7 @@ z: A ⊢ m : C[x -> z, y -> z, q -> refl(z)]
 J[X.y.q.C](z.M;p): C[x -> n, y -> o, q -> p]
 #+END_SRC
 
-*** computation rule
+- computation rule
 
 #+BEGIN_SRC
 A type n:A o:A
