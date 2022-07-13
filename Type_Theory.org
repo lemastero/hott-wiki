@@ -15,11 +15,11 @@
  - [[/Type_Theory.org#identity-type][identity type]]
 
 ** inference rules
-formation rules - how to build type (declare type)
-introduction rules - how to create elements
-elimination rules - how to use elements (to build dependent function)
-computation rules - what will happen when we introduce and then eliminate (how to apply dependent function)
-uniqueness rules - if we eliminate and introduce we should get the same result
+- formation rules - how to build type (declare type)  
+- introduction rules (constructors) - how to create elements  
+- elimination rules (induction principle) - how to use elements (to build dependent function)  
+- computation rules - what will happen when we introduce and then eliminate (how to apply dependent function)  
+- uniqueness rules - if we eliminate and introduce we should get judgmentaly equal result
 
 
 ** universes
@@ -271,7 +271,47 @@ absurd = Zero-recursion
 
 ** dependent sum
 
-** dependent product
+** dependent function
+
+- formation rule
+
+#+BEGIN_SRC
+Γ ⊢ A : Univ(i)   Γ,x:A ⊢ B x : Univ(i)
+------------------------------------- Π-form
+Γ ⊢ Π x:A -> B x : Univ(i)  
+#+END_SRC
+
+- introduction rule
+
+#+BEGIN_SRC
+Γ, x:A ⊢ b:B x
+---------------------------------- Π-intro
+Γ ⊢ λ (x:A) -> b : Π (x:A) -> B x  
+#+END_SRC
+
+- elimination rule
+
+#+BEGIN_SRC
+Γ ⊢ f : Π (x:A) -> B x    Γ ⊢ a:A
+---------------------------------- Π-elim
+Γ ⊢ f(a) : B a
+#+END_SRC
+
+- computation rule
+
+#+BEGIN_SRC
+Γ, x:A ⊢ b:B x   Γ ⊢ a:A
+-------------------------------------- Π-comp-beta
+Γ ⊢ (λ (x:A) -> b)(a) == b[x:=a] : B a
+#+END_SRC
+
+- uniqueness rule
+
+#+BEGIN_SRC
+Γ ⊢ f : Π (x:A) -> B x
+---------------------------------------- Π-comp-eta
+Γ ⊢ f == (λ x -> f(x)) : Pi (x:A) -> B x
+#+END_SRC
 
 ** identity type
 
@@ -292,6 +332,7 @@ refl(m): Id(A)(m,m)
 #+END_SRC
 
 - elimination rule
+
 #+BEGIN_SRC
 A type   n:A   o:A   p:Id(A)(n;o)
 x:A,y:A,q:Id(x;y) ⊢ C type
